@@ -1,0 +1,76 @@
+#!/usr/bin/env node
+const cliTools = new (require('../lib/cli-tools'));
+var frontend;
+
+try {
+    frontend = new (require('../lib/frontend'))(process.cwd());
+} catch (e) {
+    cliTools.error('Can\'t run frontend. ' + e.message + '\nProbably you are running this command not in frontend directory');
+    process.exit(0);
+}
+
+const cli = require('commander');
+cli.version('0.0.1');
+
+cli.command('build [env]')
+    .description('run setup commands for all envs')
+    .action(function(env) {
+        env = env || 'dev';
+        cliTools.info('Star building frontend for env: ' + cliTools.chalk.bold(env));
+        frontend.builder().build(env);
+    });
+
+cli.command('watch')
+    .description('build dev environment and start watching for changing files')
+    .action(function() {
+        cliTools.info('Star watching frontend');
+        frontend.builder().watch();
+    });
+
+cli.command('hot')
+    .description('Run hot server')
+    .action(function() {
+        cliTools.info('Starting hot server');
+        frontend.builder().hot();
+    });
+
+cli.command('lock')
+    .description('Run tests of different types')
+    .action(function() {
+        cliTools.info('Start locking dependencies version');
+        cliTools.exec('npm shrinkwrap --dev && bower i --reset-shrinkwrap');
+    });
+
+cli.command('install [type]')
+    .description('Installs different things')
+    .action(function(type) {
+        var commands = {
+            'main': 'sudo npm i -g bower webpack babel-cli',
+            'tests': 'sudo npm i -g fs phantomcss resemblejs casperjs phantomjs'
+        };
+        var cmd = type ? commands[type] : 'npm i && bower install';
+        if (!cmd) {
+            cliTools.error('Unknown install type');
+            process.exit(0);
+        }
+        cliTools.exec(cmd);
+    });
+
+cli.command('test [type]')
+    .description('Run tests of different types')
+    .action(function(type) {
+        switch (type) {
+            case 'comparison':
+                cliTools.exec('casperjs test test/comparison.js --user=`whoami` || true');
+                break;
+            default:
+                cliTools.error('unknow argument [' + cliTools.chalk.inverse(type) + ']');
+                process.exit(0);
+        }
+    });
+
+cli.parse(process.argv);
+
+if (!cli.args.length) {
+    cli.help();
+}
