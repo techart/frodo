@@ -1,13 +1,12 @@
 {
-  "name": "frontend",
+  "name": "frodo",
   "version": "0.0.1",
   "description": "Main frontend controlling tool",
-  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": {
-    "frontend": "bin/frontend.js"
+    "frodo": "bin/frodo.js"
   },
   "author": "TechArt",
   "license": "ISC",
