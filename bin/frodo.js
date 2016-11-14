@@ -74,10 +74,13 @@ try {
     cli.command('init [type]')
         .description('Init frontend of different types')
         .action(function(type) {
-            type = type ? type : 'sass';
+            type = type ? type : 'master';
+            if (type == 'sass') {
+                type = 'master';
+            }
             switch (type) {
-                case 'sass':
                 case 'less':
+                case 'master':
                     frontend.installer().install(type);
                     break;
                 default:
