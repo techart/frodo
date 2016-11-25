@@ -1,10 +1,10 @@
 #!/usr/bin/env node
-const cliTools = new (require('../lib/cli-tools'));
+const cliTools = new (require('../lib/cli-tools').default);
 var frontend;
 
 try {
 
-    frontend = new (require('../lib/frontend'))(process.cwd());
+    frontend = new (require('../lib/frontend').default)(process.cwd());
 
     const cli = require('commander');
     cli.version('0.0.1');
@@ -78,6 +78,7 @@ try {
             if (type == 'sass') {
                 type = 'master';
             }
+
             switch (type) {
                 case 'less':
                 case 'master':
