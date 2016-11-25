@@ -1,7 +1,9 @@
-import cliTools from './cli-tools';
+import CliTools from './cli-tools';
 import path from 'path';
 import fse from 'fs-extra';
 import childProcess from 'child_process';
+
+const cliTools = new CliTools();
 
 class Installer
 {

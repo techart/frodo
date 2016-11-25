@@ -19,7 +19,7 @@ class CliTools
         process.stderr.write(this.format.error(message) + '\n');
     }
 
-    static exec(cmd) {
+    exec(cmd) {
         return childProcess.execSync(cmd, {stdio:[0,1,2]})
     };
 

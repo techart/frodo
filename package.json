@@ -4,7 +4,8 @@
   "description": "Main frontend controlling tool",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "compile": "babel ./src -d ./lib"
+    "compile": "babel ./src -d ./lib",
+    "postinstall": "npm run compile"
   },
   "bin": {
     "frodo": "bin/frodo.js"
