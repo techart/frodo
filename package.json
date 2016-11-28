@@ -4,7 +4,7 @@
   "description": "Main frontend controlling tool",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "compile": "babel ./src -d ./lib",
+    "compile": "babel -d src/ lib/",
     "postinstall": "npm run compile"
   },
   "bin": {
