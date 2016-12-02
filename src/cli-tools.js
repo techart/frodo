@@ -6,7 +6,10 @@ class CliTools
     constructor() {
         this.format = {
             info: chalk.bgWhite.blue,
-            error: chalk.red.bold
+            error: chalk.red.bold,
+            buildError: chalk.bgRed.white.bold,
+            buildWarning: chalk.yellow.bold,
+            buildSuccess: chalk.bgGreen.white.bold
         };
         this.chalk = chalk;
     }
@@ -17,6 +20,22 @@ class CliTools
 
     error(message) {
         process.stderr.write(this.format.error(message) + '\n');
+    }
+
+    simple(message) {
+        process.stderr.write(message + '\n');
+    }
+
+    buildError(message) {
+        process.stderr.write(this.format.buildError(message) + '\n');
+    }
+
+    buildWarning(message) {
+        process.stderr.write(this.format.buildWarning(message) + '\n');
+    }
+
+    buildSuccess(message) {
+        process.stderr.write(this.format.buildSuccess(message) + '\n');
     }
 
     exec(cmd) {
