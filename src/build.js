@@ -8,6 +8,11 @@ class Build {
 		return !(fse.existsSync(Build.sumFile) && !Build.sumChanged());
 	}
 
+	static get sumFile() {
+		return `assets/sum.${Build.env}.md5`;
+	}
+
+
 	static get md5sum() {
 		return cliTools.exec("tar cf - ./ --exclude='./node_modules*' --exclude='./assets*' --exclude='./img/sprite/sprite.png' --exclude='./src/style/_sprite.scss'|md5sum", false);
 	}
@@ -41,7 +46,7 @@ class Build {
 	}
 }
 
-Build.sumFile = 'assets/sum.md5';
 Build.noExists = '';
+Build.env = 'dev';
 
 export default Build;
