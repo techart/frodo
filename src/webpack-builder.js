@@ -13,6 +13,7 @@ class WebpackBuilder
     setEnv(env = 'dev') {
         process.env.BROWSERSLIST_CONFIG = './.browserslist';
         process.env.NODE_ENV = env;
+        Build.env = env;
     }
 
     build(env) {
