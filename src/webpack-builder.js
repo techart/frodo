@@ -1,8 +1,7 @@
 import webpack from 'webpack';
 import CliTools from './cli-tools';
 import Logger from './logger';
-
-const cliTools = new CliTools();
+import Build from './build';
 
 class WebpackBuilder
 {
@@ -18,11 +17,23 @@ class WebpackBuilder
 
     build(env) {
         this.setEnv(env);
+        if (!Build.needRebuild() && Build.exists(env ,this.dir)) {
+            this.logger.noNeedRebuild();
+            return;
+        }
+
+        if (Build.noExists) {
+            this.logger[Build.noExists]();
+        }
+
         const webpackConfig = require(this.dir +  '/webpack.config.js');
         const compiler = webpack(webpackConfig);
         compiler.run((err, stats) => {
             err && process.stderr.write(err);
             this.log(stats, webpackConfig.stats, true);
+            if (!stats.hasErrors()) {
+                Build.save();
+            }
         });
     }
 
