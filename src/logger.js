@@ -40,6 +40,18 @@ class Logger
 		}
 	}
 
+	noNeedRebuild() {
+		cliTools.buildSuccess(`${this.buildDate(new Date(Date.now()))} Nothing changed, using old build`);
+	}
+
+	noAssets() {
+		cliTools.buildError(`${this.buildDate(new Date(Date.now()))} There is no assets. Forcing rebuild`);
+	}
+
+	noBuild() {
+		cliTools.buildError(`${this.buildDate(new Date(Date.now()))} Nothing changed, but I didn't find build. Forcing rebuild`);
+	}
+
 	buildDate(date) {
 		return `${date.getHours()}:${this._timeLeadZero(date.getMinutes())}:${this._timeLeadZero(date.getSeconds())}`
 	}

@@ -38,10 +38,13 @@ class CliTools
         process.stderr.write(this.format.buildSuccess(message) + '\n');
     }
 
-    exec(cmd) {
-        return childProcess.execSync(cmd, {stdio:[0,1,2]})
-    };
+    exec(cmd, redirect = true) {
+        if (redirect) {
+            return childProcess.execSync(cmd, {stdio: [0, 1, 2]})
+        }
 
+        return childProcess.execSync(cmd);
+    }
 }
 
 export default CliTools;
