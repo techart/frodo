@@ -16,9 +16,10 @@ class WebpackBuilder
         Build.env = env;
     }
 
-    build(env) {
+    build(env, force = false) {
         this.setEnv(env);
-        if (!Build.needRebuild() && Build.exists(env ,this.dir)) {
+
+        if (!force && !Build.needRebuild() && Build.exists(env ,this.dir)) {
             this.logger.noNeedRebuild();
             return;
         }

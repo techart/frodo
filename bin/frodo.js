@@ -9,13 +9,16 @@ try {
     const cli = require('commander');
     cli.version('0.0.1');
 
+    cli.option('-f, --force', 'Force build');
+
     cli.command('build [env]')
         .description('run setup commands for all envs')
         .action(function(env) {
+            var force = cli.force || false;
             frontend.check_dir();
             env = env || 'dev';
             cliTools.info('Star building frontend for env: ' + cliTools.chalk.bold(env));
-            frontend.builder().build(env);
+            frontend.builder().build(env, force);
         });
 
     cli.command('watch')
