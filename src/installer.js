@@ -167,8 +167,7 @@ class Installer
     }
 
     clone(type) {
-        var branch = type == 'sass' ? type : 'master';
-        cliTools.exec(`git clone -b ${branch} git@gitlab.s.intranet:core/frontend-blank.git frontend`);
+        cliTools.exec(`git clone -b ${type} git@gitlab.s.intranet:core/frontend-blank.git frontend`);
         fse.removeSync(`${this.dir}/frontend/.git`);
         process.chdir('frontend');
         this.dir += '/frontend';
