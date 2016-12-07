@@ -14,13 +14,17 @@ class Logger
 		this.jsonStats = stats.toJson();
 	}
 
+	get lastChild() {
+		return this.jsonStats.children[this.jsonStats.children.length - 1] || {errors: [], warnings: []};
+	}
+
 	get errors() {
-		return this.jsonStats.errors;
+		return this.jsonStats.errors.concat(this.lastChild.errors);
 	}
 
 	getWarnings() {
 		let warnings = [];
-		this.jsonStats.children.pop().warnings.forEach(function(warning) {
+		this.lastChild.warnings.forEach(function(warning) {
 			if (warning != 'undefined' && warnings.indexOf(warning) == -1) {
 				warnings.push(warning);
 			}
@@ -72,13 +76,24 @@ class Logger
 			if (error.includes('Module build failed')) {
 				return;
 			}
-
-			if (error.endsWith('.scss') || error.endsWith('.less')) {
-				this._formatStyleError(error);
-			} else {
-				this._formatJsError(error);
-			}
+			this._formatError(error);
 		});
+	}
+
+	_formatError(error) {
+		if (error.match(/Module not found: Error: Cannot resolve/i)) {
+			this._formatResolveError(error);
+			return;
+		}
+
+		if (error.match(/\.(scss|sass|css|less)$/)) {
+			this._formatStyleError(error);
+			return;
+		}
+
+		if (error.match(/\.(js)/)) {
+			this._formatJsError(error);
+		}
 	}
 
 	_formatStyleError(error) {
@@ -91,6 +106,27 @@ class Logger
 		cliTools.buildError(`Error in ${parts.shift()}`);
 		cliTools.simple(parts.join('\n'));
 	}
+
+	_formatResolveError(error) {
+		let parts = error.split('\n');
+		cliTools.buildError(`${this._findResolveErrorMessage(parts[1])} in ${this._findResolvedModuleName(parts[0])}`);
+		cliTools.simple('\n');
+	}
+
+	_findResolvedModuleName(string) {
+		if (string.endsWith('.js')) {
+			return string;
+		}
+
+		if (string.match(/\.(scss|sass|css|less)$/)) {
+			return string.match(/\.\/src(.*)\.(scss|sass|css|less)$/)[0];
+		}
+	}
+
+	_findResolveErrorMessage(string) {
+		return string.split('in')[0];
+	}
+
 
 	_formatOutputOptions(options, isBuild) {
 		options.children = false;
