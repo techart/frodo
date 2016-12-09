@@ -1,4 +1,3 @@
-import webpack from 'webpack';
 import CliTools from './cli-tools';
 import Logger from './logger';
 import Build from './build';
@@ -8,6 +7,7 @@ class WebpackBuilder
     constructor(dir) {
         this.dir = dir;
         this.logger = new Logger();
+        this.webpack = require(this.dir+'/node_modules/webpack');
     }
 
     setEnv(env = 'dev') {
@@ -29,7 +29,7 @@ class WebpackBuilder
         }
 
         const webpackConfig = require(this.dir +  '/webpack.config.js');
-        const compiler = webpack(webpackConfig);
+        const compiler = this.webpack(webpackConfig);
         compiler.run((err, stats) => {
             err && process.stderr.write(err);
             this.log(stats, webpackConfig.stats, true);
