@@ -55,7 +55,7 @@ class WebpackBuilder
     }
 
     hot() {
-        this.setEnv();
+        this.setEnv('hot');
         require(this.dir + '/webpack.server.js');
     }
 }
