@@ -42,7 +42,7 @@ class WebpackBuilder
     watch() {
         this.setEnv();
         const webpackConfig = require(this.dir +  '/webpack.config.js');
-        const compiler = webpack(webpackConfig);
+        const compiler = this.webpack(webpackConfig);
         compiler.watch({}, (err, stats) => {
             err && process.stderr.write(err);
             this.log(stats, webpackConfig.stats);
