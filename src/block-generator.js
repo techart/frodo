@@ -13,8 +13,11 @@ class BlockGenerator
 	create(name, options) {
 		let {type, files} = options;
 		let blockDir = this.createBlockDir(name, type);
-		files.forEach((fileType) => {
-			this[`create${this._capitalizeFirst(fileType)}`](blockDir, name);
+
+		Object.keys(files).forEach((fileType) => {
+			if (files[fileType]) {
+				this[`create${this._capitalizeFirst(fileType)}`](blockDir, name);
+			}
 		});
 	}
 

@@ -9,9 +9,6 @@ try {
     const cli = require('commander');
     cli.version('0.0.1');
 
-
-
-
     cli.command('build [env]')
         .description('run setup commands for all envs')
         .option('-f, --force', 'Force build')
@@ -97,9 +94,13 @@ try {
             }
         });
     cli.command('create <block> <name>')
-        .description('Creates block')
-        .option('-t, --type <type>', 'Block type. Common by default')
-        .option('-F, --full', 'Adds all files to block')
+        .description('Creates block, block argument should be only "block"')
+        //.option('-t, --type <type>', 'Block type. Common by default')
+        .option('-s, --add-style', 'Create block style')
+        .option('-j, --add-js', 'Create block js')
+        .option('-t, --add-template', 'Create block template')
+        .option('-S, --no-style', 'Dont create block style')
+        .option('-J, --no-js', 'Dont create block js')
         .option('-T, --no-template', 'Dont create block template')
         .action(function(block, name, options) {
             frontend.check_dir();
@@ -107,19 +108,22 @@ try {
                 cliTools.error('There should be word - block');
                 process.exit(0);
             }
+            var blockType = 'common';
+            var blockName = name;
 
-            var blockType = options.type || 'common';
-            var files = ['style', 'template'];
-
-            if (options.full) {
-                files.push('js');
+            var parts = name.split('/');
+            if (parts.length > 1) {
+                blockType = parts[0];
+                blockName = parts[1];
             }
 
-            if (!options.template) {
-                files.splice(1, 1);
-            }
+            var files = {
+                style: options.addStyle || options.style || false,
+                template: options.addTemplate || options.template || false,
+                js: options.addJs || false
+            };
 
-            frontend.blockGenerator().create(name, {type: blockType, files: files});
+            frontend.blockGenerator().create(blockName, {type: blockType, files: files});
         });
 
     cli.parse(process.argv);
