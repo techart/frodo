@@ -9,12 +9,14 @@ try {
     const cli = require('commander');
     cli.version('0.0.1');
 
-    cli.option('-f, --force', 'Force build');
+
+
 
     cli.command('build [env]')
         .description('run setup commands for all envs')
-        .action(function(env) {
-            var force = cli.force || false;
+        .option('-f, --force', 'Force build')
+        .action(function(env, options) {
+            var force = options.force || false;
             frontend.check_dir();
             env = env || 'dev';
             cliTools.info('Star building frontend for env: ' + cliTools.chalk.bold(env));
@@ -93,6 +95,31 @@ try {
                     cliTools.error('unknow argument [' + cliTools.chalk.inverse(type) + ']');
                     process.exit(0);
             }
+        });
+    cli.command('create <block> <name>')
+        .description('Creates block')
+        .option('-t, --type <type>', 'Block type. Common by default')
+        .option('-F, --full', 'Adds all files to block')
+        .option('-T, --no-template', 'Dont create block template')
+        .action(function(block, name, options) {
+            frontend.check_dir();
+            if (block != 'block') {
+                cliTools.error('There should be word - block');
+                process.exit(0);
+            }
+
+            var blockType = options.type || 'common';
+            var files = ['style', 'template'];
+
+            if (options.full) {
+                files.push('js');
+            }
+
+            if (!options.template) {
+                files.splice(1, 1);
+            }
+
+            frontend.blockGenerator().create(name, {type: blockType, files: files});
         });
 
     cli.parse(process.argv);
