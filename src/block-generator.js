@@ -1,4 +1,7 @@
 import fse from 'fs-extra';
+import CliTools from './cli-tools';
+
+const cliTools = new CliTools();
 
 class BlockGenerator
 {
@@ -11,37 +14,69 @@ class BlockGenerator
 	}
 
 	create(name, options) {
-		let {type, files} = options;
+		let {type, files, force} = options;
 		let blockDir = this.createBlockDir(name, type);
 
 		Object.keys(files).forEach((fileType) => {
 			if (files[fileType]) {
-				this[`create${this._capitalizeFirst(fileType)}`](blockDir, name);
+				this.createFile(blockDir, name, force, fileType);
 			}
 		});
 	}
 
 	createBlockDir(name, type) {
-		let path = `${this.blocksDir}${type}/${name}`;
+		let namespace = `${this.blocksDir}${type}`;
+		let path = `${namespace}/${name}`;
+
+		if (!fse.existsSync(namespace)) {
+			fse.mkdirpSync(namespace);
+			fse.writeFileSync(this.fullFilePath(namespace, type, 'js'), this._contextFile());
+		}
+
 		fse.mkdirpSync(path);
 		return path;
 	}
 
-	createStyle(blockDir, name) {
-		let styleType = require(this.dir +  '/user.settings.js').mainStyleType;
-		fse.writeFileSync(this.fileName(blockDir, name, styleType), this._styleContent(name));
+	canCreateFile(path, force, file) {
+		if (!force && fse.existsSync(path)) {
+			cliTools.error(`Can't create ${file}. Already exists. To enforce creation use -f. I hope u know what u doing`);
+			return false;
+		}
+
+		return true;
 	}
 
-	createTemplate(blockDir, name) {
-		fse.writeFileSync(this.fileName(blockDir, name, 'html.twig'), this._templateContent(name));
+	createFile(blockDir, name, force, fileType) {
+		let type = this.type(fileType);
+		let fileName = this.fileName(name, type);
+		let path = this.fullFilePath(blockDir, fileName);
+		if (this.canCreateFile(path, force, fileName)) {
+			fse.writeFileSync(path, this.content(fileType, name));
+			cliTools.buildSuccess("Create " + fileName);
+		}
 	}
 
-	createJs(blockDir, name) {
-		fse.writeFileSync(this.fileName(blockDir, name, 'js'), this._scriptContent(name));
+	type(fileType) {
+		switch (fileType) {
+			case 'style':
+				return require(this.dir +  '/user.settings.js').mainStyleType;
+			case 'template':
+				return 'html.twig';
+			default:
+				return fileType;
+		}
 	}
 
-	fileName(blockDir, name, extension) {
-		return blockDir + '/' + name + '.' + extension;
+	content(fileType, name) {
+		return this["_"+fileType+"Content"](name);
+	}
+
+	fullFilePath(blockDir, fileName) {
+		return blockDir + '/' + fileName;
+	}
+
+	fileName(name, extension) {
+		return name + '.' + extension;
 	}
 
 	_styleContent(name) {
@@ -60,16 +95,31 @@ class BlockGenerator
 		return result.join('\n');
 	}
 
-	_scriptContent(name) {
+	_jsContent(name) {
 		let result = [];
+		let className = this._toCamelCase(name);
 		result.push('import BEM from "tao-bem";');
 		result.push('');
-		result.push(`class ${this._capitalizeFirst(name)} extends BEM.Block {`);
+		result.push(`class ${className} extends BEM.Block {`);
 		result.push('\tstatic get blockName()');
 		result.push('\t{');
 		result.push(`\t\treturn '${this._withPrefix(name)}';`);
 		result.push('\t}');
 		result.push('}');
+		result.push('');
+		result.push(`${className}.register();`);
+		result.push('');
+		result.push(`export default ${className};`);
+		return result.join('\n');
+	}
+
+	_contextFile() {
+		let result = [];
+		result.push('function requireAll(r) {');
+		result.push('\tr.keys().map(r);');
+		result.push('}');
+		result.push('');
+		result.push("requireAll(require.context('.', true, " + /^\.\/[^\/]+\/[^/.]+\.(js|css|scss|sass|less)$/.toString()+ "));");
 		return result.join('\n');
 	}
 
@@ -79,6 +129,14 @@ class BlockGenerator
 
 	_capitalizeFirst(str) {
 		return str[0].toUpperCase() + str.substring(1);
+	}
+
+	_toCamelCase(str) {
+		let result = str.split('-').map((part) => {
+			return this._capitalizeFirst(part);
+		});
+
+		return result.join('');
 	}
 }
 

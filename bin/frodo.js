@@ -95,13 +95,13 @@ try {
         });
     cli.command('create <block> <name>')
         .description('Creates block, block argument should be only "block"')
-        //.option('-t, --type <type>', 'Block type. Common by default')
         .option('-s, --add-style', 'Create block style')
         .option('-j, --add-js', 'Create block js')
         .option('-t, --add-template', 'Create block template')
         .option('-S, --no-style', 'Dont create block style')
         .option('-J, --no-js', 'Dont create block js')
         .option('-T, --no-template', 'Dont create block template')
+        .option('-f, --force', 'Force creation')
         .action(function(block, name, options) {
             frontend.check_dir();
             if (block != 'block') {
@@ -110,6 +110,7 @@ try {
             }
             var blockType = 'common';
             var blockName = name;
+            var force = options.force || false;
 
             var parts = name.split('/');
             if (parts.length > 1) {
@@ -123,7 +124,7 @@ try {
                 js: options.addJs || false
             };
 
-            frontend.blockGenerator().create(blockName, {type: blockType, files: files});
+            frontend.blockGenerator().create(blockName, {type: blockType, files: files, force: force});
         });
 
     cli.parse(process.argv);
