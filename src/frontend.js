@@ -1,5 +1,6 @@
 import WebpackBuilder from './webpack-builder';
 import Installer from './installer';
+import BlockGenerator from './block-generator';
 import fs from 'fs';
 
 class Frontend
@@ -8,6 +9,7 @@ class Frontend
         this.dir = dir;
         this._builder = null;
         this._installer = null;
+        this._blockGenerator = null
     }
 
     check_dir() {
@@ -24,6 +26,10 @@ class Frontend
 
     installer() {
         return this._installer ? this._installer : this._installer = new Installer(this.dir);
+    }
+
+    blockGenerator() {
+        return this._blockGenerator ? this._blockGenerator : this._blockGenerator = new BlockGenerator(this.dir);
     }
 }
 
