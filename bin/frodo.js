@@ -124,7 +124,7 @@ try {
                 js: options.addJs || false
             };
 
-            frontend.blockGenerator().create(blockName, {type: blockType, files: files, force: force});
+            frontend.blockGenerator().create(blockName, {namespace: blockType, files: files, force: force});
         });
 
     cli.parse(process.argv);

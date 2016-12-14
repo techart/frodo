@@ -14,45 +14,45 @@ class BlockGenerator
 	}
 
 	create(name, options) {
-		let {type, files, force} = options;
-		let blockDir = this.createBlockDir(name, type);
+		let {namespace, files, force} = options;
+		let blockDir = this.createBlockDir(name, namespace);
 
 		Object.keys(files).forEach((fileType) => {
 			if (files[fileType]) {
-				this.createFile(blockDir, name, force, fileType);
+				this.createFile(blockDir, name, force, fileType, namespace);
 			}
 		});
 	}
 
-	createBlockDir(name, type) {
-		let namespace = `${this.blocksDir}${type}`;
-		let path = `${namespace}/${name}`;
+	createBlockDir(name, namespace) {
+		let namespaceDir = `${this.blocksDir}${namespace}`;
+		let path = `${namespaceDir}/${name}`;
 
-		if (!fse.existsSync(namespace)) {
-			fse.mkdirpSync(namespace);
-			fse.writeFileSync(this.fullFilePath(namespace, type, 'js'), this._contextFile());
+		if (!fse.existsSync(namespaceDir)) {
+			fse.mkdirpSync(namespaceDir);
+			fse.writeFileSync(this.fullFilePath(namespaceDir, this.fileName(namespace, 'js')), this._contextFile());
 		}
 
 		fse.mkdirpSync(path);
 		return path;
 	}
 
-	canCreateFile(path, force, file) {
+	canCreateFile(path, force, file, name, namespace) {
 		if (!force && fse.existsSync(path)) {
-			cliTools.error(`Can't create ${file}. Already exists. To enforce creation use -f. I hope u know what u doing`);
+			cliTools.error(`Can't create ${namespace}/${name}/${file}. Already exists. To enforce creation use -f. I hope u know what u doing`);
 			return false;
 		}
 
 		return true;
 	}
 
-	createFile(blockDir, name, force, fileType) {
+	createFile(blockDir, name, force, fileType, namespace) {
 		let type = this.type(fileType);
 		let fileName = this.fileName(name, type);
 		let path = this.fullFilePath(blockDir, fileName);
-		if (this.canCreateFile(path, force, fileName)) {
+		if (this.canCreateFile(path, force, fileName, name, namespace)) {
 			fse.writeFileSync(path, this.content(fileType, name));
-			cliTools.buildSuccess("Create " + fileName);
+			cliTools.buildSuccess(`Create ${namespace}/${name}/${fileName}`);
 		}
 	}
 
