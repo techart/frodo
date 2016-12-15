@@ -49,7 +49,7 @@ try {
         .action(function(type) {
             var commands = {
                 'main': 'sudo npm i -g bower webpack babel-cli',
-                'tests': 'sudo npm i -g fs phantomcss resemblejs casperjs phantomjs'
+                'tests': 'sudo npm i -g fs phantomjs-prebuilt phantomcss resemblejs casperjs'
             };
             var cmd = type ? commands[type] : 'npm i && bower install';
             if (!cmd) {
