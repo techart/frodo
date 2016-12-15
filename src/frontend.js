@@ -1,6 +1,7 @@
 import WebpackBuilder from './webpack-builder';
 import Installer from './installer';
 import BlockGenerator from './block-generator';
+import Formatter from './style-formatter';
 import fs from 'fs';
 
 class Frontend
@@ -9,7 +10,8 @@ class Frontend
         this.dir = dir;
         this._builder = null;
         this._installer = null;
-        this._blockGenerator = null
+        this._blockGenerator = null;
+        this._formatter = null;
     }
 
     check_dir() {
@@ -30,6 +32,10 @@ class Frontend
 
     blockGenerator() {
         return this._blockGenerator ? this._blockGenerator : this._blockGenerator = new BlockGenerator(this.dir);
+    }
+
+    formatter() {
+        return this._formatter ? this._formatter : this._formatter = new Formatter(this.dir);
     }
 }
 

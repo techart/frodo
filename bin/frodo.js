@@ -127,6 +127,14 @@ try {
             frontend.blockGenerator().create(blockName, {namespace: blockType, files: files, force: force});
         });
 
+    cli.command('format')
+        .description('Styles to code style')
+        .action(function() {
+            frontend.check_dir();
+            frontend.formatter().format();
+
+        });
+
     cli.parse(process.argv);
 
     if (!cli.args.length) {
