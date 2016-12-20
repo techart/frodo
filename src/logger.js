@@ -29,11 +29,11 @@ class Logger
 				warnings.push(warning);
 			}
 		});
-		return warnings;
+		return warnings.concat(this.jsonStats.warnings);
 	}
 
 	logStats(options, isBuild = false) {
-		if (this.stats.hasErrors()) {
+		if (this.stats.hasErrors() || this.stats.hasWarnings()) {
 			this._logErrors();
 			this._logWarnings();
 			process.stdout.write(this.stats.toString(this._formatOutputOptions(options, isBuild)) + '\n');
