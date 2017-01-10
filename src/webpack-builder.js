@@ -1,4 +1,3 @@
-import CliTools from './cli-tools';
 import Logger from './logger';
 import Build from './build';
 
@@ -41,7 +40,7 @@ class WebpackBuilder
 
     watch() {
         this.setEnv();
-        const webpackConfig = require(this.dir +  '/webpack.config.js');
+        const webpackConfig = this.applyProgressPlugin(require(this.dir +  '/webpack.config.js'));
         const compiler = this.webpack(webpackConfig);
         compiler.watch({}, (err, stats) => {
             err && process.stderr.write(err);
@@ -57,6 +56,17 @@ class WebpackBuilder
     hot() {
         this.setEnv('hot');
         require(this.dir + '/webpack.server.js');
+    }
+
+    applyProgressPlugin(config) {
+        let ProgressPlugin = require(this.dir+'/node_modules/webpack/lib/ProgressPlugin');
+        config.plugins.push(new ProgressPlugin((percentage) => {
+            if (percentage == 0) {
+                this.logger.startCompile();
+            }
+        }));
+
+        return config;
     }
 }
 

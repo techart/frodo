@@ -16,7 +16,7 @@ try {
             var force = options.force || false;
             frontend.check_dir();
             env = env || 'dev';
-            cliTools.info('Star building frontend for env: ' + cliTools.chalk.bold(env));
+            cliTools.info('Start building frontend for env: ' + cliTools.chalk.bold(env));
             frontend.builder().build(env, force);
         });
 
@@ -24,7 +24,7 @@ try {
         .description('build dev environment and start watching for changing files')
         .action(function() {
             frontend.check_dir();
-            cliTools.info('Star watching frontend');
+            cliTools.info('Start watching frontend');
             frontend.builder().watch();
         });
 

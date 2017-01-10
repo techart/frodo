@@ -56,6 +56,10 @@ class Logger
 		cliTools.buildError(`${this.buildDate(new Date(Date.now()))} Nothing changed, but I didn't find build. Forcing rebuild`);
 	}
 
+	startCompile() {
+		cliTools.info('Start building');
+	}
+
 	buildDate(date) {
 		return `${date.getHours()}:${this._timeLeadZero(date.getMinutes())}:${this._timeLeadZero(date.getSeconds())}`
 	}
