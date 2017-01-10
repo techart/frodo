@@ -27,7 +27,7 @@ class WebpackBuilder
             this.logger[Build.noExists]();
         }
 
-        const webpackConfig = require(this.dir +  '/webpack.config.js');
+        const webpackConfig = this.applyProgressPlugin(require(this.dir +  '/webpack.config.js'), true);
         const compiler = this.webpack(webpackConfig);
         compiler.run((err, stats) => {
             err && process.stderr.write(err);
@@ -58,15 +58,20 @@ class WebpackBuilder
         require(this.dir + '/webpack.server.js');
     }
 
-    applyProgressPlugin(config) {
+    applyProgressPlugin(config, isBuild = false) {
         let ProgressPlugin = require(this.dir+'/node_modules/webpack/lib/ProgressPlugin');
-        config.plugins.push(new ProgressPlugin((percentage) => {
-            if (percentage == 0) {
-                this.logger.startCompile();
-            }
-        }));
-
+        config.plugins.push(new ProgressPlugin(isBuild ? this.buildProgressLog.bind(this) : this.watchProgressLog.bind(this)));
         return config;
+    }
+
+    watchProgressLog (percent) {
+        if (percent == 0) {
+            this.logger.startCompile();
+        }
+    }
+
+    buildProgressLog (percent) {
+        this.logger.buildProgress(Math.ceil(percent * 100));
     }
 }
 

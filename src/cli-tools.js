@@ -38,12 +38,21 @@ class CliTools
         process.stderr.write(this.format.buildSuccess(message) + '\n');
     }
 
+    building(percentage) {
+        process.stderr.write(this.format.info('Building...........') + this.format.buildSuccess(percentage + '%'));
+    }
+
     exec(cmd, redirect = true) {
         if (redirect) {
             return childProcess.execSync(cmd, {stdio: [0, 1, 2]})
         }
 
         return childProcess.execSync(cmd);
+    }
+
+    clear() {
+        process.stderr.clearLine();
+        process.stderr.cursorTo(0);
     }
 }
 

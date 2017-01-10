@@ -36,10 +36,11 @@ class Logger
 		if (this.stats.hasErrors() || this.stats.hasWarnings()) {
 			this._logErrors();
 			this._logWarnings();
-			process.stdout.write(this.stats.toString(this._formatOutputOptions(options, isBuild)) + '\n');
+			this._logStats(options, isBuild);
 			cliTools.buildError(`${this.buildDate(new Date(this.stats.endTime))} Build failed`);
 		} else {
 			this._logWarnings();
+			this._logStats(options, isBuild);
 			cliTools.buildSuccess(`${this.buildDate(new Date(this.stats.endTime))} Build successful`);
 		}
 	}
@@ -58,6 +59,15 @@ class Logger
 
 	startCompile() {
 		cliTools.info('Start building');
+	}
+
+	buildProgress(percentage) {
+		if (percentage != 100) {
+			cliTools.clear();
+			cliTools.building(percentage);
+		} else {
+			cliTools.clear();
+		}
 	}
 
 	buildDate(date) {
@@ -82,6 +92,12 @@ class Logger
 			}
 			this._formatError(error);
 		});
+	}
+
+	_logStats(options, isBuild) {
+		if (isBuild) {
+			process.stdout.write(this.stats.toString(this._formatOutputOptions(options, isBuild)) + '\n');
+		}
 	}
 
 	_formatError(error) {
