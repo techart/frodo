@@ -49,8 +49,9 @@ class WebpackBuilder
     }
 
     log(stats, options, isBuild = false) {
+        let opt = options || {};
         this.logger.setStats(stats);
-        this.logger.logStats(options, isBuild);
+        this.logger.logStats(opt, isBuild);
     }
 
     hot() {

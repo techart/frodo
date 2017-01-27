@@ -78,7 +78,7 @@ try {
         .action(function(type) {
             type = type || 'master';
 
-            if (type == 'sass') {
+            if (type == 'sass' || type == 'scss') {
                 type = 'master';
             }
 
