@@ -66,18 +66,17 @@ class Installer
     }
 
     checkSudo() {
-        //var out = require('child_process').spawnSync('npm config get prefix', [], {shell: true, encoding: 'utf8'});
         var out = childProcess.spawnSync('npm config get prefix', [], {shell: true, encoding: 'utf8'});
         if (out.output) {
             var result = false;
             out.output.forEach((v) => {
-                if (v && v.indexOf('home') != -1) {
+                if (v && v.indexOf('home') == -1) {
                     result = true;
                 }
             });
-            return false;
+            return result;
         }
-        return false;
+        return true;
     }
 
     _replaceOptionsInConfig(name, value, txt) {
@@ -167,7 +166,7 @@ class Installer
     }
 
     clone(type) {
-        cliTools.exec(`git clone -b ${type} git@gitlab.s.intranet:core/frontend-blank.git frontend`);
+        cliTools.exec(`git clone -b ${type} https://github.com/techart/frontend-blank.git frontend`);
         fse.removeSync(`${this.dir}/frontend/.git`);
         process.chdir('frontend');
         this.dir += '/frontend';
