@@ -84,6 +84,7 @@ class BlockGenerator
 		result.push('@import "~style";');
 		result.push('');
 		result.push(`.${this._withPrefix(name)} {`);
+		result.push('\t//');
 		result.push(`}`);
 		result.push('');
 		return result.join('\n');
