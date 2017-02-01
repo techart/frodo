@@ -12,12 +12,21 @@ try {
     cli.command('build [env]')
         .description('run setup commands for all envs')
         .option('-f, --force', 'Force build')
+        .option('-h, --hash <type>', 'Force build')
         .action(function(env, options) {
             var force = options.force || false;
             frontend.check_dir();
             env = env || 'dev';
+
+            var hashType = options.hash || (env == 'dev' ? 'md5' : 'git');
+
+            if (hashType != 'git' && hashType != 'md5') {
+                cliTools.error('unknow hash type [' + cliTools.chalk.inverse(hashType) + ']');
+                process.exit(0);
+            }
+
             cliTools.info('Start building frontend for env: ' + cliTools.chalk.bold(env));
-            frontend.builder().build(env, force);
+            frontend.builder(hashType.toUpperCase()).build(env, force);
         });
 
     cli.command('watch')

@@ -3,28 +3,29 @@ import Build from './build';
 
 class WebpackBuilder
 {
-    constructor(dir) {
+    constructor(dir, hashType) {
         this.dir = dir;
         this.logger = new Logger();
         this.webpack = require(this.dir+'/node_modules/webpack');
+        this.buildObj = new Build(hashType);
     }
 
     setEnv(env = 'dev') {
         process.env.BROWSERSLIST_CONFIG = './.browserslist';
         process.env.NODE_ENV = env;
-        Build.env = env;
+        this.buildObj.env = env;
     }
 
     build(env, force = false) {
         this.setEnv(env);
 
-        if (!force && !Build.needRebuild() && Build.exists(env ,this.dir)) {
+        if (!force && !this.buildObj.needRebuild() && this.buildObj.exists(env ,this.dir)) {
             this.logger.noNeedRebuild();
             return;
         }
 
-        if (Build.noExists) {
-            this.logger[Build.noExists]();
+        if (this.buildObj.existStatus) {
+            this.logger[this.buildObj.existStatus]();
         }
 
         const webpackConfig = this.applyProgressPlugin(require(this.dir +  '/webpack.config.js'), true);
@@ -33,7 +34,7 @@ class WebpackBuilder
             err && process.stderr.write(err);
             this.log(stats, webpackConfig.stats, true);
             if (!stats.hasErrors()) {
-                Build.save();
+                this.buildObj.save();
             }
         });
     }

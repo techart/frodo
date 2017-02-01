@@ -3,67 +3,82 @@ import CliTools from './cli-tools';
 
 const cliTools = new CliTools();
 
+const HASH_TYPES = {'GIT': 1, 'MD5': 2};
+
+class HashControl {
+	constructor(type, env) {
+		this.type = HASH_TYPES[type];
+		this.env = env;
+	}
+
+	get hashFile() {
+		if (this.type == HASH_TYPES.GIT) {
+			return `assets/hash.${this.env}.txt`;
+		}
+
+		return `assets/sum.${this.env}.md5`;
+	}
+
+	get savedHash() {
+		return fse.readFileSync(this.hashFile, 'utf8')
+	}
+
+	get currentHash() {
+		if (this.type == HASH_TYPES.GIT) {
+			return cliTools.exec("cd ../;git ls-tree -d HEAD frontend", false).toString().split(' ').pop().split('\t').shift();
+		}
+
+		return cliTools.exec("tar cf - ./ --exclude='./node_modules*' --exclude='./assets*' --exclude='./img/sprite/sprite.png' --exclude='./src/style/_sprite.scss'|md5sum", false).toString();
+	}
+
+	isChanged() {
+		return this.savedHash != this.currentHash;
+	}
+
+	save() {
+		let type = this.type;
+		Object.keys(HASH_TYPES).map((key) => {
+			this.type = HASH_TYPES[key];
+			fse.writeFile(this.hashFile, this.currentHash);
+		});
+
+		this.type = type;
+	}
+}
+
 class Build {
-	static needRebuild() {
-		//return !(fse.existsSync(Build.sumFile) && !Build.sumChanged());
-		return !(fse.existsSync(Build.hashFile) && !Build.hashChanged());
+	constructor(hashType, env = 'dev') {
+		this.hashControl = new HashControl(hashType, env);
+		this.existStatus = '';
 	}
 
-	static get sumFile() {
-		return `assets/sum.${Build.env}.md5`;
+	set env(env) {
+		this.hashControl.env = env;
 	}
 
-	static get hashFile() {
-		return `assets/hash.${Build.env}.txt`;
+	needRebuild() {
+		return !(fse.existsSync(this.hashControl.hashFile) && !this.hashControl.isChanged());
 	}
 
-	static get md5sum() {
-		return cliTools.exec("tar cf - ./ --exclude='./node_modules*' --exclude='./assets*' --exclude='./img/sprite/sprite.png' --exclude='./src/style/_sprite.scss'|md5sum", false);
-	}
-
-	static get gitHash() {
-		return cliTools.exec("cd ../;git ls-tree -d HEAD frontend", false).toString().split(' ').pop().split('\t').shift();
-	}
-
-	static get sum() {
-		return fse.readFileSync(Build.sumFile, 'utf8')
-	}
-
-	static get hash() {
-		return fse.readFileSync(Build.hashFile, 'utf8')
-	}
-
-	static save() {
-		//fse.writeFile(Build.sumFile, Build.md5sum);
-		fse.writeFile(Build.hashFile, Build.gitHash);
-	}
-
-	static sumChanged() {
-		return Build.sum != Build.md5sum.toString();
-	}
-
-	static hashChanged() {
-		return Build.hash != Build.gitHash;
-	}
-
-	static exists(env, dir) {
+	exists(env, dir) {
 		let assetPath = `assets/${env}.json`;
 		if (fse.existsSync(assetPath)) {
 			let asset = JSON.parse(fse.readFileSync(assetPath).toString());
 			let docRoot = require(dir +  '/user.settings.js').docRoot;
 			if (!fse.existsSync(docRoot + asset.index.js)) {
-				Build.noExists = 'noBuild';
+				this.existStatus = 'noBuild';
 				return false;
 			}
 			return true;
 		} else {
-			Build.noExists = 'noAssets';
+			this.existStatus = 'noAssets';
 			return false;
 		}
 	}
-}
 
-Build.noExists = '';
-Build.env = 'dev';
+	save() {
+		this.hashControl.save();
+	}
+}
 
 export default Build;

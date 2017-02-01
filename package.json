@@ -1,6 +1,6 @@
 {
   "name": "@webtechart/frodo",
-  "version": "1.0.15",
+  "version": "1.0.16",
   "description": "Main frontend controlling tool",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
