@@ -59,9 +59,13 @@ class PathFinder
 
 	pathFromConfig(path) {
 		let file  = fs.readFileSync(this.workspaceConfig(path));
-		let configPath = file.toString().match(/^(path_to_frontend|path_to_mordor)(.*)$/im)[2];
+		let matchResult = file.toString().match(/^(path_to_frontend|path_to_mordor)(.*)$/im);
+		let configPath;
+		if (matchResult) {
+			configPath = matchResult[2].trim();
+		}
 		try {
-			return fs.realpathSync(path + '/' + configPath.trim());
+			return fs.realpathSync(path + '/' + configPath);
 		} catch (e) {
 			throw new PathFinderError('You told me wrong path (shit in config)');
 		}
