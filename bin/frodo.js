@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 const cliTools = new (require('../lib/cli-tools').default);
 var frontend;
+var PathFinderError = require('../lib/errors/path-finder-error').default;
 
 try {
 
@@ -143,6 +144,17 @@ try {
             frontend.formatter().format();
 
         });
+    cli.command('path_to_frontend')
+        .alias('path_to_mordor')
+        .description('Print path to mord... to closest frontend')
+        .action(function() {
+            var dir = frontend.pathFinder().pathToGo();
+            if (dir != process.cwd()) {
+                cliTools.info(dir);
+            } else {
+                cliTools.info("I'm already there")
+            }
+        });
 
     cli.parse(process.argv);
 
@@ -151,6 +163,11 @@ try {
     }
 
 } catch (e) {
-    cliTools.error('Can\'t run frontend. ' + e.message + '\nProbably you are running this command not in frontend directory');
+    if (e instanceof PathFinderError) {
+        cliTools.error('Can\'t find frontend. ' + e.message);
+    } else {
+        cliTools.error('Can\'t run frontend. ' + e.message + '\nProbably you are running this command not in frontend directory');
+    }
+
     process.exit(0);
 }

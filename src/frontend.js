@@ -2,6 +2,7 @@ import WebpackBuilder from './webpack-builder';
 import Installer from './installer';
 import BlockGenerator from './block-generator';
 import Formatter from './style-formatter';
+import PathFinder from './path-finder';
 import fs from 'fs';
 
 class Frontend
@@ -12,13 +13,14 @@ class Frontend
         this._installer = null;
         this._blockGenerator = null;
         this._formatter = null;
+        this._pathFinder = null;
     }
 
     check_dir() {
-        try {
-            fs.statSync(this.dir + '/user.settings.js');
-        } catch(e) {
-            throw new Error('Can\'t find settings file [user.settings.js] in current dir.');
+        let dir = this.pathFinder().pathToGo();
+        if (dir !== this.dir) {
+            this.dir = dir;
+            process.chdir(this.dir);
         }
     }
 
@@ -36,6 +38,10 @@ class Frontend
 
     formatter() {
         return this._formatter ? this._formatter : this._formatter = new Formatter(this.dir);
+    }
+
+    pathFinder() {
+        return this._pathFinder ? this._pathFinder : this._pathFinder = new PathFinder(this.dir);
     }
 }
 
