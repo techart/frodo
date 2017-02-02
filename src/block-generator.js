@@ -102,8 +102,7 @@ class BlockGenerator
 		result.push('import BEM from "tao-bem";');
 		result.push('');
 		result.push(`class ${className} extends BEM.Block {`);
-		result.push('\tstatic get blockName()');
-		result.push('\t{');
+		result.push('\tstatic get blockName() {');
 		result.push(`\t\treturn '${this._withPrefix(name)}';`);
 		result.push('\t}');
 		result.push('}');
