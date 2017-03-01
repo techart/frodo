@@ -3,6 +3,7 @@ import Installer from './installer';
 import BlockGenerator from './block-generator';
 import Formatter from './style-formatter';
 import PathFinder from './path-finder';
+import BlankUpdate from './blank-update';
 import fs from 'fs';
 
 class Frontend
@@ -14,6 +15,7 @@ class Frontend
         this._blockGenerator = null;
         this._formatter = null;
         this._pathFinder = null;
+        this._blankUpdate = null;
     }
 
     check_dir() {
@@ -42,6 +44,10 @@ class Frontend
 
     pathFinder() {
         return this._pathFinder ? this._pathFinder : this._pathFinder = new PathFinder(this.dir);
+    }
+
+    blankUpdate() {
+        return this._blankUpdate ? this._blankUpdate : this._blankUpdate = new BlankUpdate(this.dir);
     }
 }
 

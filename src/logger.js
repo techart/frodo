@@ -62,6 +62,10 @@ class Logger
 	}
 
 	buildProgress(percentage) {
+		if (!process.stdout.isTTY) {
+			return;
+		}
+
 		if (percentage != 100) {
 			cliTools.clear();
 			cliTools.building(percentage);

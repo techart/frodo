@@ -65,7 +65,7 @@ class Build {
 		if (fse.existsSync(assetPath)) {
 			let asset = JSON.parse(fse.readFileSync(assetPath).toString());
 			let docRoot = require(dir +  '/user.settings.js').docRoot;
-			if (!fse.existsSync(docRoot + asset.index.js)) {
+			if (!fse.existsSync(docRoot + asset[Object.keys(asset)[0]].js)) {
 				this.existStatus = 'noBuild';
 				return false;
 			}

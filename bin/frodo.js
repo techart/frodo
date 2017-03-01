@@ -61,7 +61,7 @@ try {
                 'main': 'sudo npm i -g bower webpack babel-cli',
                 'tests': 'sudo npm i -g fs phantomjs-prebuilt phantomcss resemblejs casperjs'
             };
-            var cmd = type ? commands[type] : 'npm i && bower install';
+            var cmd = type ? commands[type] : 'npm run pkg';
             if (!cmd) {
                 cliTools.error('Unknown install type');
                 process.exit(0);
@@ -154,6 +154,22 @@ try {
             } else {
                 cliTools.info("I'm already there")
             }
+        });
+
+    cli.command('update')
+        .description('Update frontend-blank')
+        .option('-f, --force', 'Force update')
+        .action(function(option) {
+            var force = option.force || false;
+            frontend.check_dir();
+            frontend.blankUpdate().update(force);
+        });
+
+    cli.command('clean')
+        .description('Removes node_modules')
+        .action(function() {
+            frontend.check_dir();
+            cliTools.exec('rm -rf node_modules');
         });
 
     cli.parse(process.argv);
