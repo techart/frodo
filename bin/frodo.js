@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 const cliTools = new (require('../lib/cli-tools').default);
+const version = require('../package.json').version;
 var frontend;
 var PathFinderError = require('../lib/errors/path-finder-error').default;
 
@@ -8,7 +9,7 @@ try {
     frontend = new (require('../lib/frontend').default)(process.cwd());
 
     const cli = require('commander');
-    cli.version('0.0.1');
+    cli.version(version);
 
     cli.command('build [env]')
         .description('run setup commands for all envs')

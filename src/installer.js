@@ -186,7 +186,7 @@ class Installer
     }
 
     installLocal() {
-        cliTools.exec('npm i && bower install');
+        cliTools.exec('npm run pkg');
         return Promise.resolve();
     }
 }
