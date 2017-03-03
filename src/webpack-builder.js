@@ -3,11 +3,11 @@ import Build from './build';
 
 class WebpackBuilder
 {
-    constructor(dir, hashType) {
+    constructor(dir) {
         this.dir = dir;
         this.logger = new Logger();
         this.webpack = require(this.dir+'/node_modules/webpack');
-        this.buildObj = new Build(hashType);
+        this.buildObj = new Build();
     }
 
     setEnv(env = 'dev') {

@@ -26,8 +26,8 @@ class Frontend
         }
     }
 
-    builder(hashType) {
-        return this._builder ? this._builder : this._builder = new WebpackBuilder(this.dir, hashType);
+    builder() {
+        return this._builder ? this._builder : this._builder = new WebpackBuilder(this.dir);
     }
 
     installer() {

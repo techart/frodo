@@ -3,19 +3,12 @@ import CliTools from './cli-tools';
 
 const cliTools = new CliTools();
 
-const HASH_TYPES = {'GIT': 1, 'MD5': 2};
-
 class HashControl {
-	constructor(type, env) {
-		this.type = HASH_TYPES[type];
+	constructor(env) {
 		this.env = env;
 	}
 
 	get hashFile() {
-		if (this.type == HASH_TYPES.GIT) {
-			return `assets/hash.${this.env}.txt`;
-		}
-
 		return `assets/sum.${this.env}.md5`;
 	}
 
@@ -24,11 +17,7 @@ class HashControl {
 	}
 
 	get currentHash() {
-		if (this.type == HASH_TYPES.GIT) {
-			return cliTools.exec("cd ../;git ls-tree -d HEAD frontend", false).toString().split(' ').pop().split('\t').shift();
-		}
-
-		return cliTools.exec("tar cf - ./ --exclude='./node_modules*' --exclude='./assets*' --exclude='./img/sprite/sprite.png' --exclude='./src/style/_sprite.scss'|md5sum", false).toString();
+		return cliTools.exec("tar cf - --mtime='2017-01-01' ./ --exclude='./node_modules*' --exclude='./assets*' --exclude='./img/sprite/sprite.png' --exclude='./src/style/_sprite.scss' --exclude='*.twig'|md5sum", false).toString();
 	}
 
 	isChanged() {
@@ -36,19 +25,13 @@ class HashControl {
 	}
 
 	save() {
-		let type = this.type;
-		Object.keys(HASH_TYPES).map((key) => {
-			this.type = HASH_TYPES[key];
-			fse.writeFile(this.hashFile, this.currentHash);
-		});
-
-		this.type = type;
+		fse.writeFile(this.hashFile, this.currentHash);
 	}
 }
 
 class Build {
-	constructor(hashType, env = 'dev') {
-		this.hashControl = new HashControl(hashType, env);
+	constructor(env = 'dev') {
+		this.hashControl = new HashControl(env);
 		this.existStatus = '';
 	}
 
