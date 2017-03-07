@@ -39,8 +39,8 @@ class BlankUpdate {
 				.then(this.checkCurrentVersion.bind(this))
 				.then(this.updateFiles.bind(this))
 				.then(() => cliTools.buildSuccess('Update complete'))
-				.catch(error => cliTools.error('Update error: ' + error));
-		})
+				.catch(this.onError);
+		}).catch(this.onError)
 	}
 
 	checkActual() {
@@ -144,6 +144,11 @@ class BlankUpdate {
 
 	filePath(fileName, prefix = '') {
 		return `${this.dir}/${prefix}${fileName}`;
+	}
+
+	onError(error) {
+		cliTools.error('Update error: ' + error);
+		process.exitCode = 21;
 	}
 }
 

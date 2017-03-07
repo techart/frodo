@@ -2,6 +2,7 @@ import CliTools from './cli-tools';
 import path from 'path';
 import fse from 'fs-extra';
 import childProcess from 'child_process';
+import InstallationError from './errors/installation-error';
 
 const cliTools = new CliTools();
 
@@ -16,12 +17,16 @@ class Installer
     }
 
     install(type) {
-        this.installGlobal();
-        this.clone(type);
-        this.installLocal();
-        this.writeUserSettings();
-        this.writeGitIgnore();
-        this.writeWorkspaceConfig();
+        try {
+            this.installGlobal();
+            this.clone(type);
+            this.installLocal();
+            this.writeUserSettings();
+            this.writeGitIgnore();
+            this.writeWorkspaceConfig();
+        } catch(e) {
+            throw new InstallationError(e.message, 20);
+        }
     }
 
     guessProjectDir() {

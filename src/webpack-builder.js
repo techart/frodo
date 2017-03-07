@@ -1,5 +1,6 @@
 import Logger from './logger';
 import Build from './build';
+import BuildError from './errors/build-error';
 
 class WebpackBuilder
 {
@@ -28,15 +29,22 @@ class WebpackBuilder
             this.logger[this.buildObj.existStatus]();
         }
 
-        const webpackConfig = this.applyProgressPlugin(require(this.dir +  '/webpack.config.js'), true);
-        const compiler = this.webpack(webpackConfig);
-        compiler.run((err, stats) => {
-            err && process.stderr.write(err);
-            this.log(stats, webpackConfig.stats, true);
-            if (!stats.hasErrors()) {
-                this.buildObj.save();
-            }
-        });
+
+        try {
+            const webpackConfig = this.applyProgressPlugin(require(this.dir + '/webpack.config.js'), true);
+            const compiler = this.webpack(webpackConfig);
+            compiler.run((err, stats) => {
+                //err && process.stderr.write(err);
+                this.log(stats, webpackConfig.stats, true);
+                if (!stats.hasErrors()) {
+                    this.buildObj.save();
+                } else {
+                    process.exitCode = 30;
+                }
+            });
+        } catch (e) {
+            throw new BuildError(e.message, 31);
+        }
     }
 
     watch() {

@@ -3,6 +3,8 @@ const cliTools = new (require('../lib/cli-tools').default);
 const version = require('../package.json').version;
 var frontend;
 var PathFinderError = require('../lib/errors/path-finder-error').default;
+var InstallationError = require('../lib/errors/installation-error').default;
+var BuildError = require('../lib/errors/build-error').default;
 
 try {
 
@@ -61,8 +63,7 @@ try {
             };
             var cmd = type ? commands[type] : 'npm run pkg';
             if (!cmd) {
-                cliTools.error('Unknown install type');
-                process.exit(0);
+                throw new Error('Unknown install type');
             }
             cliTools.exec(cmd);
         });
@@ -76,8 +77,7 @@ try {
                     cliTools.exec('casperjs test test/comparison.js --user=`whoami` || true');
                     break;
                 default:
-                    cliTools.error('unknow argument [' + cliTools.chalk.inverse(type) + ']');
-                    process.exit(0);
+                    throw new Error('unknow argument [' + cliTools.chalk.inverse(type) + ']');
             }
         });
 
@@ -97,8 +97,7 @@ try {
                     frontend.installer().install(type);
                     break;
                 default:
-                    cliTools.error('unknow argument [' + cliTools.chalk.inverse(type) + ']');
-                    process.exit(0);
+                    throw new Error('unknow argument [' + cliTools.chalk.inverse(type) + ']');
             }
         });
     cli.command('create <block> <name>')
@@ -113,8 +112,7 @@ try {
         .action(function(block, name, options) {
             frontend.check_dir();
             if (block != 'block') {
-                cliTools.error('There should be word - block');
-                process.exit(0);
+                throw new Error('There should be word - block');
             }
             var blockType = 'common';
             var blockName = name;
@@ -179,9 +177,13 @@ try {
 } catch (e) {
     if (e instanceof PathFinderError) {
         cliTools.error('Can\'t find frontend. ' + e.message);
+    } else if (e instanceof InstallationError) {
+        cliTools.error('Something went wrong while frontend installation: ' + e.message);
+    } else if (e instanceof BuildError) {
+        e.errorCode == 31 && cliTools.error('Something went wrong while build process: ' + e.message);
     } else {
-        cliTools.error('Can\'t run frontend. ' + e.message + '\nProbably you are running this command not in frontend directory');
+        cliTools.error('Something went wrong: ' + e.message);
     }
 
-    process.exit(0);
+    process.exitCode = e.errorCode || 1;
 }
