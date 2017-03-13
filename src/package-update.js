@@ -4,6 +4,8 @@ class PackageUpdate
 		this._packageLocal = packageLocal;
 		this._packageByTag = null;
 		this._packageActual = null;
+		this.scriptsUpdate = false;
+		this._defaultProps = ['version', 'devDependencies'];
 	}
 
 	get tag() {
@@ -43,7 +45,10 @@ class PackageUpdate
 	}
 
 	_propsToUpdate() {
-		return ['version', 'devDependencies'];
+		if (this.scriptsUpdate) {
+			this._defaultProps.push('scripts');
+		}
+		return this._defaultProps;
 	}
 }
 

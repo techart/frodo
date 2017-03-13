@@ -155,10 +155,12 @@ try {
     cli.command('update')
         .description('Update frontend-blank')
         .option('-f, --force', 'Force update')
+        .option('-s, --scripts-upd', 'Update scripts in package.json')
         .action(function(option) {
             var force = option.force || false;
+            var scriptsUpdate = option.scriptsUpd || false;
             frontend.check_dir();
-            frontend.blankUpdate().update(force);
+            frontend.blankUpdate().update(force, scriptsUpdate);
         });
 
     cli.command('clean')

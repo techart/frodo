@@ -28,7 +28,8 @@ class BlankUpdate {
 		}
 	}
 
-	update(force) {
+	update(force, scriptsUpdate) {
+		this.packageUpdate.scriptsUpdate = scriptsUpdate;
 		this.checkActual().then(isActual => {
 			if (!force && isActual) {
 				cliTools.buildSuccess('Package version is actual. Use -f to force update');
@@ -38,7 +39,10 @@ class BlankUpdate {
 			this.updateCore()
 				.then(this.checkCurrentVersion.bind(this))
 				.then(this.updateFiles.bind(this))
-				.then(() => cliTools.buildSuccess('Update complete'))
+				.then(() => {
+					cliTools.buildSuccess('Update complete');
+					cliTools.exec('npm run pkg');
+				})
 				.catch(this.onError);
 		}).catch(this.onError)
 	}
