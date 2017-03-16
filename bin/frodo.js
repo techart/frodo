@@ -156,11 +156,13 @@ try {
         .description('Update frontend-blank')
         .option('-f, --force', 'Force update')
         .option('-s, --scripts-upd', 'Update scripts in package.json')
+        .option('-v, --version-number <number>', 'Update frontend-blank to specfied version')
         .action(function(option) {
             var force = option.force || false;
             var scriptsUpdate = option.scriptsUpd || false;
+            var versionNumber = option.versionNumber || '';
             frontend.check_dir();
-            frontend.blankUpdate().update(force, scriptsUpdate);
+            frontend.blankUpdate().update(versionNumber, force, scriptsUpdate);
         });
 
     cli.command('clean')

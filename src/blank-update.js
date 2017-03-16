@@ -1,6 +1,7 @@
 import CliTools from './cli-tools';
 import fse from 'fs-extra';
 import PackageUpdate from './package-update';
+import VersionManager from './version-manager';
 
 const cliTools = new CliTools();
 const https = require('https');
@@ -11,6 +12,7 @@ class BlankUpdate {
 		this.files = [];
 		this.changedFiles = [];
 		this.packageUpdate = new PackageUpdate(require(this.package));
+		this.versionManager = new VersionManager();
 	}
 
 	get package() {
@@ -21,6 +23,17 @@ class BlankUpdate {
 		return this.dir + '/.blankcore';
 	}
 
+	get tagsRequestOptions() {
+		return {
+			host: 'api.github.com',
+			path: '/repos/techart/frontend-blank/tags',
+			headers: {
+				"User-Agent": "Techart"
+			}
+		}
+	}
+
+
 	requestOptions(fileName, tag) {
 		return {
 			host: 'raw.githubusercontent.com',
@@ -28,23 +41,45 @@ class BlankUpdate {
 		}
 	}
 
-	update(force, scriptsUpdate) {
+	update(version, force, scriptsUpdate) {
 		this.packageUpdate.scriptsUpdate = scriptsUpdate;
-		this.checkActual().then(isActual => {
-			if (!force && isActual) {
-				cliTools.buildSuccess('Package version is actual. Use -f to force update');
-				return;
+		if (version) {
+			this.versionManager.targetVersion = version;
+		}
+
+		this.checkTargetVersion()
+			.then(this.checkActual.bind(this))
+			.then(isActual => {
+				if (!force && isActual) {
+					cliTools.buildSuccess('Package version is actual. Use -f to force update');
+					return;
+				}
+
+				this.updateCore()
+					.then(this.checkCurrentVersion.bind(this))
+					.then(this.updateFiles.bind(this))
+					.then(() => {
+						cliTools.buildSuccess('Update complete');
+						cliTools.exec('npm run pkg');
+					})
+					.catch(this.onError);
+			}).catch(this.onError)
+	}
+
+	checkTargetVersion() {
+		return this._requestTags().then(data => {
+			this.versionManager.tags = data;
+
+			if (!this.versionManager.sameMajor(this.packageUpdate.tag)) {
+				return Promise.reject(`Can't update from one major version to another. To update in current major version run 'frodo update -v ${this.packageUpdate.tag.split('.')[0]}'`);
 			}
 
-			this.updateCore()
-				.then(this.checkCurrentVersion.bind(this))
-				.then(this.updateFiles.bind(this))
-				.then(() => {
-					cliTools.buildSuccess('Update complete');
-					cliTools.exec('npm run pkg');
-				})
-				.catch(this.onError);
-		}).catch(this.onError)
+			if (!this.versionManager.tagExist()) {
+				return Promise.reject('Requested tag not found');
+			}
+
+			return Promise.resolve();
+		});
 	}
 
 	checkActual() {
@@ -131,8 +166,31 @@ class BlankUpdate {
 	}
 
 	requestFile(file, tag = 'master') {
+		if (tag == 'master') {
+			tag = tag == this.versionManager.targetVersion ? tag : this.versionManager.targetVersion;
+		}
+
+		return this._makeRequest(this.requestOptions(file, tag));
+	}
+
+	getFileContent(file) {
+		return fse.readFileSync(this.dir + '/' + file);
+	}
+
+	filePath(fileName, prefix = '') {
+		return `${this.dir}/${prefix}${fileName}`;
+	}
+
+	_requestTags() {
+		return this._makeRequest(this.tagsRequestOptions);
+	}
+
+	_makeRequest(options) {
 		return new Promise((resolve, reject) => {
-			let request = https.get(this.requestOptions(file, tag), (response) => {
+			let request = https.get(options, (response) => {
+				if (response.statusCode == 404) {
+					reject(new Error(`Not found in address ${options.host}${options.path}`));
+				}
 				let data = '';
 				response.on('data', (chunk) => data += chunk);
 				response.on('end', () => resolve(Buffer.from(data)));
@@ -140,14 +198,6 @@ class BlankUpdate {
 
 			request.on('error', reject);
 		})
-	}
-
-	getFileContent(file) {
-		return fse.readFileSync(this.dir + '/' +file);
-	}
-
-	filePath(fileName, prefix = '') {
-		return `${this.dir}/${prefix}${fileName}`;
 	}
 
 	onError(error) {
