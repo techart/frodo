@@ -1,6 +1,7 @@
 import Logger from './logger';
 import Build from './build';
 import BuildError from './errors/build-error';
+import configManager from './config-manager';
 
 class WebpackBuilder
 {
@@ -9,10 +10,13 @@ class WebpackBuilder
         this.logger = new Logger();
         this.webpack = require(this.dir+'/node_modules/webpack');
         this.buildObj = new Build();
+        this.configManager = configManager(dir);
     }
 
     setEnv(env = 'dev') {
-        process.env.BROWSERSLIST_CONFIG = './.browserslist';
+        if (!parseInt(this.configManager.directive('no_browser_list'))) {
+            process.env.BROWSERSLIST_CONFIG = './.browserslist';
+        }
         process.env.NODE_ENV = env;
         this.buildObj.env = env;
     }

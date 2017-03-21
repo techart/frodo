@@ -58,13 +58,16 @@ try {
         .description('Installs different things')
         .action(function(type) {
             var commands = {
-                'main': 'sudo npm i -g bower webpack babel-cli',
-                'tests': 'sudo npm i -g fs phantomjs-prebuilt phantomcss resemblejs casperjs'
+                main: 'sudo npm i -g bower webpack babel-cli',
+                tests: 'sudo npm i -g fs phantomjs-prebuilt phantomcss resemblejs casperjs',
+                local: 'npm run pkg'
             };
-            var cmd = type ? commands[type] : 'npm run pkg';
+            var cmd = type ? commands[type] : commands.local;
             if (!cmd) {
                 throw new Error('Unknown install type');
             }
+
+            cmd == commands.local && frontend.check_dir();
             cliTools.exec(cmd);
         });
 

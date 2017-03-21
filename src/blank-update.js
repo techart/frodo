@@ -2,6 +2,7 @@ import CliTools from './cli-tools';
 import fse from 'fs-extra';
 import PackageUpdate from './package-update';
 import VersionManager from './version-manager';
+import configManager from './config-manager';
 
 const cliTools = new CliTools();
 const https = require('https');
@@ -9,10 +10,10 @@ const https = require('https');
 class BlankUpdate {
 	constructor(dir) {
 		this.dir = dir;
-		this.files = [];
 		this.changedFiles = [];
 		this.packageUpdate = new PackageUpdate(require(this.package));
 		this.versionManager = new VersionManager();
+		this.configManager = configManager(dir);
 	}
 
 	get package() {
@@ -20,7 +21,7 @@ class BlankUpdate {
 	}
 
 	get core() {
-		return this.dir + '/.blankcore';
+		return this.configManager.coreFile;
 	}
 
 	get tagsRequestOptions() {
@@ -91,9 +92,7 @@ class BlankUpdate {
 
 	updateCore() {
 		return this.requestFile('.blankcore').then((data) => {
-			fse.writeFileSync(this.core, data);
-			this.files = data.toString().split('\n');
-			this.files.splice(this.files.indexOf('.blankcore'), 1);
+			this.configManager.updateCore(data);
 		});
 	}
 
@@ -101,7 +100,7 @@ class BlankUpdate {
 		cliTools.info('Checking local files');
 		let tag = this.packageUpdate.tag;
 		let promises = [];
-		this.files.forEach((file) => {
+		this.configManager.filesList().forEach((file) => {
 			if (file == 'package.json') {
 				promises.push(this.checkPackageJson(file, tag));
 			} else {
@@ -123,7 +122,7 @@ class BlankUpdate {
 	updateFiles() {
 		cliTools.info('Updating');
 		let promises = [];
-		this.files.forEach((file) => {
+		this.configManager.filesList().forEach((file) => {
 			promises.push(this.updateFile(file));
 		});
 
