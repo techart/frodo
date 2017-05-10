@@ -83,7 +83,9 @@ class BlockGenerator
 		let result = [];
 		result.push('@import "~style";');
 		result.push('');
-		result.push(`.${this._withPrefix(name)} {`);
+		result.push(`$block-name: '${this._withPrefix(name)}';`);
+		result.push('');
+		result.push(`.#{$block-name} {`);
 		result.push('\t//');
 		result.push(`}`);
 		result.push('');
