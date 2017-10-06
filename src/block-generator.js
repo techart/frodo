@@ -94,7 +94,7 @@ class BlockGenerator
 
 	_templateContent(name) {
 		let result = [];
-		result.push(`<div class="${this._withPrefix(name)}"></div>`);
+		result.push(`<div class="{{ block }}"></div>`);
 		return result.join('\n');
 	}
 
