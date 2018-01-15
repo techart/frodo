@@ -94,7 +94,7 @@ try {
             }
 
             switch (type) {
-                case 'less':
+                case 'beta':
                 case 'webgl':
                 case 'master':
                     frontend.installer().install(type);

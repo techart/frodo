@@ -121,7 +121,7 @@ class BlockGenerator
 		result.push('\tr.keys().map(r);');
 		result.push('}');
 		result.push('');
-		result.push("requireAll(require.context('.', true, " + /^\.\/[^\/]+\/[^/.]+\.(js|css|scss|sass|less)$/.toString()+ "));");
+		result.push("requireAll(require.context('.', true, " + /^\.\/[^/]+\/[^/.]+\.(js|css|scss|sass|less)$/.toString()+ "));");
 		return result.join('\n');
 	}
 

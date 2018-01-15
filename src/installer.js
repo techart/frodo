@@ -158,7 +158,8 @@ class Installer
                 assetsPath = path.relative(this.projectDir, assetsPath);
                 var thisDir = path.relative(this.projectDir, this.dir);
                 var config =
-    `prepare cd ${thisDir}; frodo build prod
+    `path_to_frontend ${thisDir}
+    prepare frodo build prod
     rsync ${buildPath}
     rsync ${assetsPath}
     `;
