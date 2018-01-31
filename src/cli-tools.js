@@ -39,7 +39,7 @@ class CliTools
     }
 
     building(percentage) {
-        process.stderr.write(this.format.info('Building...........') + this.format.buildSuccess(percentage + '%'));
+        process.stderr.write(this.format.info('Идет сборка...........') + this.format.buildSuccess(percentage + '%'));
     }
 
     exec(cmd, redirect = true) {

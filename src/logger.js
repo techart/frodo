@@ -37,28 +37,28 @@ class Logger
 			this._logErrors();
 			this._logWarnings();
 			this._logStats(options, isBuild);
-			cliTools.buildError(`${this.buildDate(new Date(this.stats.endTime))} Build failed`);
+			cliTools.buildError(`${this.buildDate(new Date(this.stats.endTime))} Ошибка сборки`);
 		} else {
 			this._logWarnings();
 			this._logStats(options, isBuild);
-			cliTools.buildSuccess(`${this.buildDate(new Date(this.stats.endTime))} Build successful`);
+			cliTools.buildSuccess(`${this.buildDate(new Date(this.stats.endTime))} Сборка прошла успешно`);
 		}
 	}
 
 	noNeedRebuild() {
-		cliTools.buildSuccess(`${this.buildDate(new Date(Date.now()))} Nothing changed, using old build`);
+		cliTools.buildSuccess(`${this.buildDate(new Date(Date.now()))} Ничего не изменено, используется старая сборка`);
 	}
 
 	noAssets() {
-		cliTools.buildError(`${this.buildDate(new Date(Date.now()))} There is no assets. Forcing rebuild`);
+		cliTools.buildError(`${this.buildDate(new Date(Date.now()))} Нет содержимого assets. Принудительная пересборка`);
 	}
 
 	noBuild() {
-		cliTools.buildError(`${this.buildDate(new Date(Date.now()))} Nothing changed, but I didn't find build. Forcing rebuild`);
+		cliTools.buildError(`${this.buildDate(new Date(Date.now()))} Ничего не изменено, но я не могу найти сборку. Принудительная пересборка`);
 	}
 
 	startCompile() {
-		cliTools.info('Start building');
+		cliTools.info('Сборка началась');
 	}
 
 	buildProgress(percentage) {
@@ -85,13 +85,13 @@ class Logger
 	_logWarnings() {
 		let warnings = this.getWarnings();
 		warnings.forEach((warning) => {
-			cliTools.buildWarning(`Warning \n ${warning} \n`);
+			cliTools.buildWarning(`Предупреждение \n ${warning} \n`);
 		})
 	}
 
 	_logErrors() {
 		this.errors.forEach((error) => {
-			if (error.includes('Module build failed')) {
+			if (error.includes('Ошибка сборки модуля')) {
 				return;
 			}
 			this._formatError(error);
@@ -121,13 +121,13 @@ class Logger
 	}
 
 	_formatStyleError(error) {
-		cliTools.buildError(`Error in ${error}`);
+		cliTools.buildError(`Ошибка в ${error}`);
 		cliTools.simple('\n');
 	}
 
 	_formatJsError(error) {
 		let parts = error.split('\n');
-		cliTools.buildError(`Error in ${parts.shift()}`);
+		cliTools.buildError(`Ошибка в ${parts.shift()}`);
 		cliTools.simple(parts.join('\n'));
 	}
 

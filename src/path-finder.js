@@ -41,7 +41,7 @@ class PathFinder
 
 	findPath(dir) {
 		if (dir === '') {
-			throw new PathFinderError("I'm lost. I don't know where i'am and there is no one who can tell me a path", 10);
+			throw new PathFinderError("Я потерялся. Не знаю, где я. Вокруг никого, кто может подсказать мне путь ", 10);
 		}
 
 		dir = dir || this.dir;
@@ -67,7 +67,7 @@ class PathFinder
 		try {
 			return fs.realpathSync(path + '/' + configPath);
 		} catch (e) {
-			throw new PathFinderError('You told me wrong path (shit in config)', 11);
+			throw new PathFinderError('Ты указал мне неверный путь. (Ошибка в config)', 11);
 		}
 	}
 }

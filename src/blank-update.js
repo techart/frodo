@@ -52,7 +52,7 @@ class BlankUpdate {
 			.then(this.checkActual.bind(this))
 			.then(isActual => {
 				if (!force && isActual) {
-					cliTools.buildSuccess('Package version is actual. Use -f to force update');
+					cliTools.buildSuccess('Версия пакета актуальна. Используйте флаг -f для принудительного обновления');
 					return;
 				}
 
@@ -60,7 +60,7 @@ class BlankUpdate {
 					.then(this.checkCurrentVersion.bind(this))
 					.then(this.updateFiles.bind(this))
 					.then(() => {
-						cliTools.buildSuccess('Update complete');
+						cliTools.buildSuccess('Обновление завершено');
 						cliTools.exec('npm run pkg');
 					})
 					.catch(this.onError);
@@ -72,11 +72,11 @@ class BlankUpdate {
 			this.versionManager.tags = data;
 
 			if (!this.versionManager.sameMajor(this.packageUpdate.tag)) {
-				return Promise.reject(`Can't update from one major version to another. To update in current major version run 'frodo update -v ${this.packageUpdate.tag.split('.')[0]}'`);
+				return Promise.reject(`Не получится обновиться от одной мажорной версии к мажорной. Для обновления в пределах мажорной версии запустите команду 'frodo update -v ${this.packageUpdate.tag.split('.')[0]}'`);
 			}
 
 			if (!this.versionManager.tagExist()) {
-				return Promise.reject('Requested tag not found');
+				return Promise.reject('Запрошенная версия не найдена');
 			}
 
 			return Promise.resolve();
@@ -97,7 +97,7 @@ class BlankUpdate {
 	}
 
 	checkCurrentVersion() {
-		cliTools.info('Checking local files');
+		cliTools.info('Проверка локальных файлов');
 		let tag = this.packageUpdate.tag;
 		let promises = [];
 		this.configManager.filesList().forEach((file) => {
@@ -109,18 +109,18 @@ class BlankUpdate {
 		});
 		return Promise.all(promises).then(() => {
 			if (this.changedFiles.length) {
-				cliTools.error('Next core files was changed by user, they are backed up and replaced. Merge them by yourself');
+				cliTools.error('Следующие библиотечные файлы были изменены пользователем (они перемещены в копии с другим именем). Объедините их самостоятельно');
 				this.changedFiles.forEach((file) => {
 					cliTools.simple(`${file} -> back.${file}`);
 				})
 			} else {
-				cliTools.buildSuccess('Local files are OK');
+				cliTools.buildSuccess('С локальными файлами все OK');
 			}
 		});
 	}
 
 	updateFiles() {
-		cliTools.info('Updating');
+		cliTools.info('Обновление');
 		let promises = [];
 		this.configManager.filesList().forEach((file) => {
 			promises.push(this.updateFile(file));
@@ -135,7 +135,7 @@ class BlankUpdate {
 				remoteContent = this.packageUpdate.mergePackages();
 			}
 			fse.writeFileSync(this.filePath(file), remoteContent);
-			cliTools.simple(file + '-> updated');
+			cliTools.simple(file + '-> обновлен');
 		})
 	}
 
@@ -188,7 +188,7 @@ class BlankUpdate {
 		return new Promise((resolve, reject) => {
 			let request = https.get(options, (response) => {
 				if (response.statusCode == 404) {
-					reject(new Error(`Not found in address ${options.host}${options.path}`));
+					reject(new Error(`Не найдено по адресу ${options.host}${options.path}`));
 				}
 				let data = '';
 				response.on('data', (chunk) => data += chunk);
@@ -200,7 +200,7 @@ class BlankUpdate {
 	}
 
 	onError(error) {
-		cliTools.error('Update error: ' + error);
+		cliTools.error('Ошибка обновления: ' + error);
 		process.exitCode = 21;
 	}
 }

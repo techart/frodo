@@ -14,35 +14,35 @@ try {
     cli.version(version);
 
     cli.command('build [env]')
-        .description('run setup commands for all envs')
-        .option('-f, --force', 'Force build')
-        .option('-h, --hash <type>', 'Deprecated. Will be removed in future')
+        .description('Запускает сборку frontend для указанного окружения (по умолчанию dev)')
+        .option('-f, --force', 'Принудительный запуск сборки (без учета хеша)')
+        .option('-h, --hash <type>', 'Устарел. В дальнейшем будет удален')
         .action(function(env, options) {
             var force = options.force || false;
             frontend.check_dir();
             env = env || 'dev';
 
             if (options.hash) {
-                cliTools.buildWarning('Hash choice is deprecated, now md5 only. -h flag will be removed');
+                cliTools.buildWarning('Выбор типа хэша. Устарел, теперь используется только md5. Флаг -h будет удален');
             }
 
-            cliTools.info('Start building frontend for env: ' + cliTools.chalk.bold(env));
+            cliTools.info('Запущена сборка frontend для окружения (env): ' + cliTools.chalk.bold(env));
             frontend.builder().build(env, force);
         });
 
     cli.command('watch')
-        .description('build dev environment and start watching for changing files')
+        .description('Запускает dev-окружение и начинает отслеживать изменения файлов')
         .action(function() {
             frontend.check_dir();
-            cliTools.info('Start watching frontend');
+            cliTools.info('Запущено отслеживание изменений скриптов и стилей');
             frontend.builder().watch();
         });
 
     cli.command('hot')
-        .description('Run hot server')
+        .description('Запускает hot-режим')
         .action(function() {
             frontend.check_dir();
-            cliTools.info('Starting hot server');
+            cliTools.info('Запущена сборка в режиме hot');
             frontend.builder().hot();
         });
 
@@ -55,7 +55,7 @@ try {
         });
 
     cli.command('install [type]')
-        .description('Installs different things')
+        .description('Устанавливает дополнительные модули')
         .action(function(type) {
             var commands = {
                 main: 'sudo npm i -g bower webpack babel-cli',
@@ -64,7 +64,7 @@ try {
             };
             var cmd = type ? commands[type] : commands.local;
             if (!cmd) {
-                throw new Error('Unknown install type');
+                throw new Error('Неизвестный тип установки');
             }
 
             cmd == commands.local && frontend.check_dir();
@@ -72,7 +72,7 @@ try {
         });
 
     cli.command('test [type]')
-        .description('Run tests of different types')
+        .description('Запускает различные тесты')
         .action(function(type) {
             frontend.check_dir();
             switch (type) {
@@ -80,12 +80,12 @@ try {
                     cliTools.exec('casperjs test test/comparison.js --user=`whoami` || true');
                     break;
                 default:
-                    throw new Error('unknow argument [' + cliTools.chalk.inverse(type) + ']');
+                    throw new Error('неизвестный аргумент [' + cliTools.chalk.inverse(type) + ']');
             }
         });
 
     cli.command('init [type]')
-        .description('Init frontend of different types')
+        .description('Устанавливает frontend')
         .action(function(type) {
             type = type || 'master';
 
@@ -100,22 +100,22 @@ try {
                     frontend.installer().install(type);
                     break;
                 default:
-                    throw new Error('unknow argument [' + cliTools.chalk.inverse(type) + ']');
+                    throw new Error('неизвестный аргумент [' + cliTools.chalk.inverse(type) + ']');
             }
         });
     cli.command('create <block> <name>')
-        .description('Creates block, block argument should be only "block"')
-        .option('-s, --add-style', 'Create block style')
-        .option('-j, --add-js', 'Create block js')
-        .option('-t, --add-template', 'Create block template')
-        .option('-S, --no-style', 'Dont create block style')
-        .option('-J, --no-js', 'Dont create block js')
-        .option('-T, --no-template', 'Dont create block template')
-        .option('-f, --force', 'Force creation')
+        .description('Создает модуль, пока поддерживается только создание модулей типа "block"')
+        .option('-s, --add-style', 'Добавляет файл стилей')
+        .option('-j, --add-js', 'Добавляет js-скрипт')
+        .option('-t, --add-template', 'Добавляет шаблон')
+        .option('-S, --no-style', 'Не добавляет файл стилей')
+        .option('-J, --no-js', 'Не добавляет js-скрипт')
+        .option('-T, --no-template', 'Не добавляет шаблон')
+        .option('-f, --force', 'Принудительное добавление (перезапись файлов)')
         .action(function(block, name, options) {
             frontend.check_dir();
             if (block != 'block') {
-                throw new Error('There should be word - block');
+                throw new Error('Должно присутствовать слово - block');
             }
             var blockType = 'common';
             var blockName = name;
@@ -137,7 +137,7 @@ try {
         });
 
     cli.command('format')
-        .description('Styles to code style')
+        .description('Формирует scss-файлы проекта')
         .action(function() {
             frontend.check_dir();
             frontend.formatter().format();
@@ -145,21 +145,21 @@ try {
         });
     cli.command('path_to_frontend')
         .alias('path_to_mordor')
-        .description('Print path to mord... to closest frontend')
+        .description('Выводит путь к папке frontend')
         .action(function() {
             var dir = frontend.pathFinder().pathToGo();
             if (dir != process.cwd()) {
                 cliTools.info(dir);
             } else {
-                cliTools.info("I'm already there")
+                cliTools.info("Я уже здесь")
             }
         });
 
     cli.command('update')
-        .description('Update frontend-blank')
-        .option('-f, --force', 'Force update')
-        .option('-s, --scripts-upd', 'Update scripts in package.json')
-        .option('-v, --version-number <number>', 'Update frontend-blank to specfied version')
+        .description('Обновляет tao-webpack')
+        .option('-f, --force', 'Принудительное обновление')
+        .option('-s, --scripts-upd', 'Обновление scripts в package.json')
+        .option('-v, --version-number <number>', 'Обновление tao-webpack до указанной версии')
         .action(function(option) {
             var force = option.force || false;
             var scriptsUpdate = option.scriptsUpd || false;
@@ -169,7 +169,7 @@ try {
         });
 
     cli.command('clean')
-        .description('Removes node_modules')
+        .description('Удаляет папку node_modules')
         .action(function() {
             frontend.check_dir();
             cliTools.exec('rm -rf node_modules');
@@ -183,13 +183,13 @@ try {
 
 } catch (e) {
     if (e instanceof PathFinderError) {
-        cliTools.error('Can\'t find frontend. ' + e.message);
+        cliTools.error('Не удается найти папку frontend. ' + e.message);
     } else if (e instanceof InstallationError) {
-        cliTools.error('Something went wrong while frontend installation: ' + e.message);
+        cliTools.error('С установкой frontend что-то пошло не так: ' + e.message);
     } else if (e instanceof BuildError) {
-        e.errorCode == 31 && cliTools.error('Something went wrong while build process: ' + e.message);
+        e.errorCode == 31 && cliTools.error('С запуском сборки что-то пошло не так: ' + e.message);
     } else {
-        cliTools.error('Something went wrong: ' + e.message);
+        cliTools.error('Что-то пошло не так: ' + e.message);
     }
 
     process.exitCode = e.errorCode || 1;

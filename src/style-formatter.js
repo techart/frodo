@@ -2,7 +2,7 @@ import CliTools from './cli-tools';
 
 const cliTools = new CliTools();
 
-class StyleFormatter 
+class StyleFormatter
 {
 	constructor(dir) {
 		this.dir = dir;
@@ -11,14 +11,14 @@ class StyleFormatter
 
 	format() {
 		if (!this._isScss()) {
-			cliTools.error("Your project type is not scss. Format works only with scss");
+			cliTools.error("Ваш проект не поддерживает scss. Format работает только с scss");
 		}
 
 		if (this._moduleExists()) {
 			cliTools.exec('./node_modules/.bin/stylefmt -c .stylelintrc --recursive=./src/**/*.scss');
 		} else {
-			cliTools.error(`Please install "${this.name}" module.`);
-			cliTools.info(`Run "npm i ${this.name} --save"`);
+			cliTools.error(`Пожалуйста. установите "${this.name}" модуль.`);
+			cliTools.info(`Запустите "yarn add ${this.name}"`);
 		}
 	}
 

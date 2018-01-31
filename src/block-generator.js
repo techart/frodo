@@ -39,7 +39,7 @@ class BlockGenerator
 
 	canCreateFile(path, force, file, name, namespace) {
 		if (!force && fse.existsSync(path)) {
-			cliTools.error(`Can't create ${namespace}/${name}/${file}. Already exists. To enforce creation use -f. I hope u know what u doing`);
+			cliTools.error(`Не удается создать ${namespace}/${name}/${file}. Уже существует. Для принудительного создания используйте флаг -f. Я надеюсь, ты осознаешь, что делаешь`);
 			return false;
 		}
 
