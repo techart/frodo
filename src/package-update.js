@@ -1,18 +1,18 @@
 class PackageUpdate
 {
 	constructor(packageLocal) {
-		this._packageLocal = packageLocal;
-		this._packageByTag = null;
+		this._packageLocal = packageLocal; //Содержимое текущего файла
+		this._packageByTag = null; //Содержимое текущего файла на github
 		this._packageActual = null;
-		this.scriptsUpdate = false;
+		this.scriptsUpdate = false; //Флаг, указывающий на необходимость обновлять список скриптов
 		this._defaultProps = ['version', 'devDependencies'];
 	}
 
-	get tag() {
+	get tag() { //Номер текущей версии
 		return this._packageLocal.version;
 	}
 
-	isActual() {
+	isActual() { //Проверка равенства версий с которой обновляемся и на какую
 		return this._packageLocal.version == this._packageActual.version;
 	}
 

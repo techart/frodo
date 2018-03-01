@@ -5,11 +5,11 @@ class CliTools
 {
     constructor() {
         this.format = {
-            info: chalk.bgWhite.blue,
+            info: chalk.blue.bold,
             error: chalk.red.bold,
             buildError: chalk.bgRed.white.bold,
             buildWarning: chalk.yellow.bold,
-            buildSuccess: chalk.bgGreen.white.bold
+            buildSuccess: chalk.green.bold
         };
         this.chalk = chalk;
     }
@@ -19,27 +19,27 @@ class CliTools
     }
 
     error(message) {
-        process.stderr.write(this.format.error(message) + '\n');
+        process.stdout.write(this.format.error(message) + '\n'); //TODO: после исправления каши с цветами и отвязки цвета от потока использовать поток ошибок
     }
 
     simple(message) {
-        process.stderr.write(message + '\n');
+        process.stdout.write(message + '\n');
     }
 
     buildError(message) {
-        process.stderr.write(this.format.buildError(message) + '\n');
+        process.stdout.write(this.format.buildError(message) + '\n'); //TODO: после исправления каши с цветами и отвязки цвета от потока использовать поток ошибок
     }
 
     buildWarning(message) {
-        process.stderr.write(this.format.buildWarning(message) + '\n');
+        process.stdout.write(this.format.buildWarning(message) + '\n');
     }
 
     buildSuccess(message) {
-        process.stderr.write(this.format.buildSuccess(message) + '\n');
+        process.stdout.write(this.format.buildSuccess(message) + '\n');
     }
 
     building(percentage) {
-        process.stderr.write(this.format.info('Идет сборка...........') + this.format.buildSuccess(percentage + '%'));
+        process.stdout.write(this.format.info('Идет сборка...........') + this.format.buildSuccess(percentage + '%'));
     }
 
     exec(cmd, redirect = true) {
@@ -51,8 +51,8 @@ class CliTools
     }
 
     clear() {
-        process.stderr.clearLine();
-        process.stderr.cursorTo(0);
+        process.stdout.clearLine();
+        process.stdout.cursorTo(0);
     }
 }
 

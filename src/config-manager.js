@@ -50,7 +50,7 @@ class ConfigManager
 		return this.data.files;
 	}
 
-	updateCore(data) {
+	updateCore(data) { //Сохранение закаченного файла конфига в локальный
 		this._parseData(data);
 		fse.writeFileSync(this.coreFile, data);
 	}

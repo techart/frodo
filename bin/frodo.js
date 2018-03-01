@@ -46,14 +46,6 @@ try {
             frontend.builder().hot();
         });
 
-    cli.command('lock')
-        .description('Run tests of different types')
-        .action(function() {
-            frontend.check_dir();
-            cliTools.info('Start locking dependencies version');
-            cliTools.exec('npm shrinkwrap --dev && bower i --reset-shrinkwrap');
-        });
-
     cli.command('install [type]')
         .description('Устанавливает дополнительные модули')
         .action(function(type) {
@@ -69,19 +61,6 @@ try {
 
             cmd == commands.local && frontend.check_dir();
             cliTools.exec(cmd);
-        });
-
-    cli.command('test [type]')
-        .description('Запускает различные тесты')
-        .action(function(type) {
-            frontend.check_dir();
-            switch (type) {
-                case 'comparison':
-                    cliTools.exec('casperjs test test/comparison.js --user=`whoami` || true');
-                    break;
-                default:
-                    throw new Error('неизвестный аргумент [' + cliTools.chalk.inverse(type) + ']');
-            }
         });
 
     cli.command('init [type]')
