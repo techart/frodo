@@ -59,9 +59,9 @@ class BlockGenerator
 	type(fileType) {
 		switch (fileType) {
 			case 'style':
-				return require(this.dir +  '/user.settings.js').mainStyleType;
+				return this.styleType();
 			case 'template':
-				return 'html.twig';
+				return this.templateType() == 'blade' ? 'blade.php' : 'twig.html';
 			default:
 				return fileType;
 		}
@@ -79,6 +79,22 @@ class BlockGenerator
 		return name + '.' + extension;
 	}
 
+	mainStyleType() {
+		return require(this.dir +  '/user.settings.js').mainStyleType;
+	}
+
+	styleType() {
+		return this.mainStyleType() ? this.mainStyleType() : 'scss';
+	}
+
+	mainTemplateType() {
+		return require(this.dir +  '/user.settings.js').mainTemplateType;
+	}
+
+	templateType() {
+		return this.mainTemplateType() ? this.mainTemplateType() : 'twig';
+	}
+
 	_styleContent(name) {
 		let result = [];
 		result.push('@import "~style";');
@@ -94,7 +110,11 @@ class BlockGenerator
 
 	_templateContent(name) {
 		let result = [];
-		result.push(`<div class="{{ block }}"></div>`);
+		if (this.templateType() == 'blade') {
+			result.push(`<div class="{{ $block }}"></div>`);
+		} else {
+			result.push(`<div class="{{ block }}"></div>`);
+		}
 		return result.join('\n');
 	}
 
