@@ -1,6 +1,6 @@
 {
   "name": "@webtechart/frodo",
-  "version": "1.10.2",
+  "version": "1.10.3",
   "description": "Main frontend controlling tool",
   "scripts": {
     "compile": "babel -d lib/ src/",

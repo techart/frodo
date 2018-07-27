@@ -61,7 +61,7 @@ class BlockGenerator
 			case 'style':
 				return this.styleType();
 			case 'template':
-				return this.templateType() == 'blade' ? 'blade.php' : 'twig.html';
+				return this.templateType() == 'blade' ? 'blade.php' : 'html.twig';
 			default:
 				return fileType;
 		}
