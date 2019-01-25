@@ -91,6 +91,7 @@ class Installer
 
     _getProjectOptions() {
         var buildPath = '../builds';
+		var twigPath = '../twig';
         var docRoot = this.projectDir;
         switch (this.projectType) {
             case 'tao':
@@ -105,7 +106,7 @@ class Installer
                 docRoot = path.join(docRoot, 'www');
                 break;
         }
-        return {'buildPath': buildPath, 'docRoot': docRoot};
+        return {'buildPath': buildPath, 'twigPath': twigPath, 'docRoot': docRoot};
     }
 
     writeUserSettings() {
@@ -134,13 +135,19 @@ class Installer
             if (fse.existsSync(filePath)) {
                 var result = fse.readFileSync(filePath, 'utf8');
 
-                var {buildPath} = this._getProjectOptions();
+				var {buildPath, twigPath} = this._getProjectOptions();
                 buildPath = path.relative(this.projectDir, buildPath);
                 buildPath = path.join('/', buildPath);
+				twigPath = path.relative(this.projectDir, twigPath);
+				twigPath = path.join('/', twigPath);
                 if (result.indexOf(buildPath) == -1) {
                     result += "\n" + buildPath;
                     fse.writeFileSync(filePath, result, 'utf8');
                 }
+				if (result.indexOf(twigPath) == -1) {
+					result += "\n" + twigPath;
+					fse.writeFileSync(filePath, result, 'utf8');
+				}
             }
         }
     }
