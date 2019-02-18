@@ -1,5 +1,4 @@
-class PackageUpdate
-{
+class PackageUpdate {
 	constructor(packageLocal) {
 		this._packageLocal = packageLocal; //Содержимое текущего файла
 		this._packageByTag = null; //Содержимое текущего файла на github
@@ -27,6 +26,7 @@ class PackageUpdate
 	localDependenciesBuffer() {
 		return this._objectToBuffer(this._packageLocal.devDependencies);
 	}
+
 	tagDependenciesBuffer() {
 		return this._objectToBuffer(this._packageByTag.devDependencies);
 	}

@@ -3,8 +3,7 @@ import CliTools from './cli-tools';
 
 const cliTools = new CliTools();
 
-class BlockGenerator
-{
+class BlockGenerator {
 	constructor(dir) {
 		this.dir = dir;
 	}
@@ -68,7 +67,7 @@ class BlockGenerator
 	}
 
 	content(fileType, name) {
-		return this["_"+fileType+"Content"](name);
+		return this['_' + fileType + 'Content'](name);
 	}
 
 	fullFilePath(blockDir, fileName) {
@@ -80,7 +79,7 @@ class BlockGenerator
 	}
 
 	mainStyleType() {
-		return require(this.dir +  '/user.settings.js').mainStyleType;
+		return require(this.dir + '/user.settings.js').mainStyleType;
 	}
 
 	styleType() {
@@ -88,7 +87,7 @@ class BlockGenerator
 	}
 
 	mainTemplateType() {
-		return require(this.dir +  '/user.settings.js').mainTemplateType;
+		return require(this.dir + '/user.settings.js').mainTemplateType;
 	}
 
 	templateType() {
@@ -121,7 +120,7 @@ class BlockGenerator
 	_jsContent(name) {
 		let result = [];
 		let className = this._toCamelCase(name);
-		result.push('import BEM from "tao-bem";');
+		result.push('import BEM from \'tao-bem\';');
 		result.push('');
 		result.push(`class ${className} extends BEM.Block {`);
 		result.push('\tstatic get blockName() {');
@@ -141,12 +140,12 @@ class BlockGenerator
 		result.push('\tr.keys().map(r);');
 		result.push('}');
 		result.push('');
-		result.push("requireAll(require.context('.', true, " + /^\.\/[^/]+\/[^/.]+\.(js|css|scss|sass|less)$/.toString()+ "));");
+		result.push('requireAll(require.context(\'.\', true, ' + /^\.\/[^/]+\/[^/.]+\.(js|css|scss|sass|less)$/.toString() + '));');
 		return result.join('\n');
 	}
 
 	_withPrefix(name) {
-		return 'b-'+name;
+		return 'b-' + name;
 	}
 
 	_capitalizeFirst(str) {

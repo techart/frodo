@@ -2,8 +2,7 @@ import CliTools from './cli-tools';
 
 const cliTools = new CliTools();
 
-class StyleFormatter
-{
+class StyleFormatter {
 	constructor(dir) {
 		this.dir = dir;
 		this.name = 'stylefmt';
@@ -11,7 +10,7 @@ class StyleFormatter
 
 	format() {
 		if (!this._isScss()) {
-			cliTools.error("Ваш проект не поддерживает scss. Format работает только с scss");
+			cliTools.error('Ваш проект не поддерживает scss. Format работает только с scss');
 		}
 
 		if (this._moduleExists()) {

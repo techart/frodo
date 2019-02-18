@@ -30,17 +30,16 @@ class BlankUpdate {
 			host: 'api.github.com',
 			path: '/repos/techart/frontend-blank/tags',
 			headers: {
-				"User-Agent": "Techart"
-			}
-		}
+				'User-Agent': 'Techart',
+			},
+		};
 	}
-
 
 	requestOptions(fileName, tag) { //Опции для закачки содержимого
 		return {
 			host: 'raw.githubusercontent.com',
-			path: `/techart/frontend-blank/${tag}/${fileName}`
-		}
+			path: `/techart/frontend-blank/${tag}/${fileName}`,
+		};
 	}
 
 	update(version, force, scriptsUpdate) {
@@ -65,7 +64,7 @@ class BlankUpdate {
 						cliTools.exec('npm run pkg');
 					})
 					.catch(this.onError);
-			}).catch(this.onError)
+			}).catch(this.onError);
 	}
 
 	checkTargetVersion() {
@@ -88,7 +87,7 @@ class BlankUpdate {
 		return this.requestFile('package.json').then((data) => {
 			this.packageUpdate.packageActual = data; //Получение данных package.json из новой версии
 			return this.packageUpdate.isActual();
-		})
+		});
 	}
 
 	updateCore() {
@@ -137,25 +136,25 @@ class BlankUpdate {
 			}
 			fse.writeFileSync(this.filePath(file), remoteContent);
 			cliTools.simple(`✅ ${file}`);
-		})
+		});
 	}
 
 	checkFile(file, tag) {
 		const fileExist = fse.existsSync(this.filePath(file));
 		return this.requestFile(file, tag).then((remoteContent) => {
 			if (fileExist && !this.isEqual(this.getFileContent(file), remoteContent)) {
-				this.backupFile(file, "");
+				this.backupFile(file, '');
 			}
 		}).catch(error => {
-			if(error.name !== "resource404") { //Перехватываем только ошибку отсутствия ресурса на удаленном сервере
+			if (error.name !== 'resource404') { //Перехватываем только ошибку отсутствия ресурса на удаленном сервере
 				throw(error);
 			}
-			if(fileExist) {
+			if (fileExist) {
 				this.requestFile(file).then((newContent) => {
-					if(!this.isEqual(this.getFileContent(file), newContent)) {
-						this.backupFile(file, "Появился в пакете позже текущей версии, но присутствует локально и отличается от новой");
+					if (!this.isEqual(this.getFileContent(file), newContent)) {
+						this.backupFile(file, 'Появился в пакете позже текущей версии, но присутствует локально и отличается от новой');
 					}
-				})
+				});
 			}
 		});
 	}
@@ -166,7 +165,7 @@ class BlankUpdate {
 			if (!this.isEqual(this.packageUpdate.localDependenciesBuffer(), this.packageUpdate.tagDependenciesBuffer())) {
 				this.backupFile(file, 'Проект имеет изменённые devDependencies');
 			}
-		})
+		});
 	}
 
 	isEqual(fileContent, content) { //Сравнивает объекты типа Buffer
@@ -205,7 +204,7 @@ class BlankUpdate {
 			});
 
 			request.on('error', reject);
-		})
+		});
 	}
 
 	onError(error) {
@@ -216,8 +215,8 @@ class BlankUpdate {
 	backupFile(file, reason) {
 		const backFile = `${file}.back`;
 		const backPath = this.filePath(backFile);
-		if(fse.existsSync(backPath)) { //TODO: перенести проверку наличия бекапов до запуска обновления
-			throw(`Обнаружены back-файлы от предыдущего запуска обновления (${backFile}), так продожаться больше не может`)
+		if (fse.existsSync(backPath)) { //TODO: перенести проверку наличия бекапов до запуска обновления
+			throw(`Обнаружены back-файлы от предыдущего запуска обновления (${backFile}), так продожаться больше не может`);
 		}
 		this.changedFiles.push(`${file} => ${file}.back ${reason}`);
 		fse.renameSync(this.filePath(file), backPath); //TODO: делать бекап только после закачки всех новых фафлов

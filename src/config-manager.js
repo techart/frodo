@@ -1,7 +1,6 @@
 import fse from 'fs-extra';
 
-class ConfigManager
-{
+class ConfigManager {
 	constructor(dir) {
 		this.dir = dir;
 		this._data = null;
@@ -13,7 +12,7 @@ class ConfigManager
 
 	get data() {
 		if (!fse.existsSync(this.coreFile)) {
-			this._data = {files:[],directives:{}};
+			this._data = {files: [], directives: {}};
 		}
 		if (!this._data) {
 			this._parseData(fse.readFileSync(this.coreFile));
@@ -24,7 +23,9 @@ class ConfigManager
 
 	set files(files) {
 		let data = this._data || {};
-		data.files = files.split('\n').filter((file) => { return file; });
+		data.files = files.split('\n').filter((file) => {
+			return file;
+		});
 		data.files.splice(data.files.indexOf('.blankcore'), 1);
 		this._data = data;
 	}
@@ -38,7 +39,9 @@ class ConfigManager
 			return;
 		}
 
-		directives.split('\n').filter((line) => { return line; }).forEach((directive) => {
+		directives.split('\n').filter((line) => {
+			return line;
+		}).forEach((directive) => {
 			let [name, value] = directive.split('=');
 			data.directives[name.trim()] = value.trim();
 		});

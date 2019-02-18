@@ -1,2 +1,4 @@
 import ExitError from './exit-error';
-export default class PathFinderError extends ExitError {}
+
+export default class PathFinderError extends ExitError {
+}

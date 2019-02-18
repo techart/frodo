@@ -4,10 +4,9 @@ import PathFinderError from './errors/path-finder-error';
 
 const cliTools = new CliTools();
 
-class PathFinder
-{
+class PathFinder {
 	constructor(dir) {
-		this.dir = dir
+		this.dir = dir;
 	}
 
 	pathToGo() {
@@ -41,7 +40,7 @@ class PathFinder
 
 	findPath(dir) {
 		if (dir === '') {
-			throw new PathFinderError("Я потерялся. Не знаю, где я. Вокруг никого, кто может подсказать мне путь ", 10);
+			throw new PathFinderError('Я потерялся. Не знаю, где я. Вокруг никого, кто может подсказать мне путь ', 10);
 		}
 
 		dir = dir || this.dir;
@@ -58,7 +57,7 @@ class PathFinder
 	}
 
 	pathFromConfig(path) {
-		let file  = fs.readFileSync(this.workspaceConfig(path));
+		let file = fs.readFileSync(this.workspaceConfig(path));
 		let matchResult = file.toString().match(/^(path_to_frontend|path_to_mordor)(.*)$/im);
 		let configPath;
 		if (matchResult) {

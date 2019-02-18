@@ -2,8 +2,7 @@ import CliTools from './cli-tools';
 
 const cliTools = new CliTools();
 
-class Logger
-{
+class Logger {
 	constructor() {
 		this.stats = null;
 		this.jsonStats = null;
@@ -24,7 +23,7 @@ class Logger
 
 	getWarnings() {
 		let warnings = [];
-		this.lastChild.warnings.forEach(function(warning) {
+		this.lastChild.warnings.forEach(function (warning) {
 			if (warning != 'undefined' && warnings.indexOf(warning) == -1) {
 				warnings.push(warning);
 			}
@@ -75,7 +74,7 @@ class Logger
 	}
 
 	buildDate(date) {
-		return `${date.getHours()}:${this._timeLeadZero(date.getMinutes())}:${this._timeLeadZero(date.getSeconds())}`
+		return `${date.getHours()}:${this._timeLeadZero(date.getMinutes())}:${this._timeLeadZero(date.getSeconds())}`;
 	}
 
 	_timeLeadZero(time) {
@@ -86,7 +85,7 @@ class Logger
 		let warnings = this.getWarnings();
 		warnings.forEach((warning) => {
 			cliTools.buildWarning(`Предупреждение \n ${warning} \n`);
-		})
+		});
 	}
 
 	_logErrors() {
@@ -150,7 +149,6 @@ class Logger
 	_findResolveErrorMessage(string) {
 		return string.split('in')[0];
 	}
-
 
 	_formatOutputOptions(options, isBuild) {
 		options.children = false;

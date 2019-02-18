@@ -13,11 +13,11 @@ class HashControl {
 	}
 
 	get savedHash() {
-		return fse.readFileSync(this.hashFile, 'utf8')
+		return fse.readFileSync(this.hashFile, 'utf8');
 	}
 
 	get currentHash() {
-		return cliTools.exec("tar cf - --mtime='2017-01-01' ./ --exclude='./node_modules*' --exclude='./assets*' --exclude='./img/sprite/sprite.png' --exclude='./src/style/_sprite.scss' --exclude='*.twig'|md5sum", false).toString();
+		return cliTools.exec('tar cf - --mtime="2017-01-01" --exclude="./node_modules*" --exclude="./assets*" --exclude="./img/sprite/sprite.png" --exclude="./src/style/_sprite.scss" --exclude="*.twig" ./|md5sum', false).toString();
 	}
 
 	isChanged() {
@@ -47,7 +47,7 @@ class Build {
 		let assetPath = `assets/${env}.json`;
 		if (fse.existsSync(assetPath)) {
 			let asset = JSON.parse(fse.readFileSync(assetPath).toString());
-			let docRoot = require(dir +  '/user.settings.js').docRoot;
+			let docRoot = require(dir + '/user.settings.js').docRoot;
 			if (!fse.existsSync(docRoot + asset[Object.keys(asset)[0]].js)) {
 				this.existStatus = 'noBuild';
 				return false;

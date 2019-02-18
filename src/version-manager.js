@@ -1,5 +1,4 @@
-class VersionManager
-{
+class VersionManager {
 	constructor() {
 		this.targetVersion = 'master';
 		this._tags = null; //Список текгов с сервера
@@ -58,8 +57,6 @@ class VersionManager
 		return [major, minor, patch].join('.');
 	}
 
-
-
 	_getMajor(tag) {
 		return tag.name.split('.')[0];
 	}
@@ -75,8 +72,8 @@ class VersionManager
 	_searchInTags() { //Проверка реального наличия тега по номеру версии this.targetVersion
 		return this._tags.find((el) => {
 			return el.name == this.targetVersion;
-		})
+		});
 	}
 }
 
-export default VersionManager
+export default VersionManager;
