@@ -52,8 +52,7 @@ try {
 		.description('Устанавливает дополнительные модули')
 		.action(function (type) {
 			var commands = {
-				main: 'sudo npm i -g bower webpack babel-cli',
-				tests: 'sudo npm i -g fs phantomjs-prebuilt phantomcss resemblejs casperjs',
+				main: 'sudo npm i -g webpack babel-cli',
 				local: 'npm run pkg',
 			};
 			var cmd = type ? commands[type] : commands.local;

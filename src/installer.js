@@ -164,11 +164,11 @@ class Installer {
 				assetsPath = path.relative(this.projectDir, assetsPath);
 				var thisDir = path.relative(this.projectDir, this.dir);
 				var config =
-					`path_to_frontend ${thisDir}
-    prepare frodo build prod
-    rsync ${buildPath}
-    rsync ${assetsPath}
-    `;
+					`
+path_to_frontend ${thisDir}
+prepare frodo install; frodo build prod
+rsync ${buildPath}
+rsync ${assetsPath}`;
 				if (result.indexOf('frodo ') == -1) {
 					result += '\n' + config;
 					fse.writeFileSync(filePath, result, 'utf8');
@@ -186,7 +186,7 @@ class Installer {
 	}
 
 	installGlobal() {
-		var pkgs = {'bower': 'bower', 'webpack': 'webpack', 'babel': 'babel-cli'};
+		var pkgs = {'webpack': 'webpack', 'babel': 'babel-cli'};
 		var spawn = childProcess.spawnSync;
 		Object.keys(pkgs).forEach((name) => {
 			var out = spawn(`which ${name}`, [], {shell: true, encoding: 'utf8'});
