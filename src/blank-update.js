@@ -8,6 +8,10 @@ import Resource404error from './errors/resource-404-error';
 const cliTools = new CliTools();
 const https = require('https');
 
+function gitRepo() {
+	return process.version.startsWith('v8.')? '/techart/frontend-blank/' : '/techart/frontend-blank5/';
+}
+
 class BlankUpdate {
 	constructor(dir) {
 		this.dir = dir;
@@ -28,7 +32,7 @@ class BlankUpdate {
 	get tagsRequestOptions() { //Опции для api
 		return {
 			host: 'api.github.com',
-			path: '/repos/techart/frontend-blank/tags',
+			path: '/repos' + gitRepo() + 'tags',
 			headers: {
 				'User-Agent': 'Techart',
 			},
@@ -36,9 +40,10 @@ class BlankUpdate {
 	}
 
 	requestOptions(fileName, tag) { //Опции для закачки содержимого
+		let repo = gitRepo();
 		return {
 			host: 'raw.githubusercontent.com',
-			path: `/techart/frontend-blank/${tag}/${fileName}`,
+			path: `${repo}${tag}/${fileName}`,
 		};
 	}
 

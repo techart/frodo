@@ -84,16 +84,18 @@ class Logger {
 	_logWarnings() {
 		let warnings = this.getWarnings();
 		warnings.forEach((warning) => {
-			cliTools.buildWarning(`Предупреждение \n ${warning} \n`);
+			let message = typeof warning == 'string' ? warning : warning.message;
+			cliTools.buildWarning(`Предупреждение \n ${message} \n`);
 		});
 	}
 
 	_logErrors() {
 		this.errors.forEach((error) => {
-			if (error.includes('Ошибка сборки модуля')) {
+			let message = typeof error == 'string' ? error : error.message;
+			if (message.includes('Ошибка сборки модуля')) {
 				return;
 			}
-			this._formatError(error);
+			this._formatError(message);
 		});
 	}
 

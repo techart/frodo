@@ -178,7 +178,11 @@ rsync ${assetsPath}`;
 	}
 
 	clone(type) {
-		cliTools.exec(`git clone -b ${type} https://github.com/techart/frontend-blank.git frontend`);
+		let gitUrl = "https://github.com/techart/frontend-blank5.git";
+		if (process.version.startsWith('v8.')) {
+			gitUrl = "https://github.com/techart/frontend-blank.git";
+		}
+		cliTools.exec(`git clone -b ${type} ${gitUrl} frontend`);
 		fse.removeSync(`${this.dir}/frontend/.git`);
 		process.chdir('frontend');
 		this.dir += '/frontend';

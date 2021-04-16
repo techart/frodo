@@ -2,12 +2,19 @@ import Logger from './logger';
 import Build from './build';
 import BuildError from './errors/build-error';
 import configManager from './config-manager';
+import CliTools from './cli-tools';
+
+const cliTools = new CliTools();
 
 class WebpackBuilder {
 	constructor(dir) {
 		this.dir = dir;
 		this.logger = new Logger();
-		this.webpack = require(this.dir + '/node_modules/webpack');
+		if (process.version.startsWith('v8.')) {
+			this.webpack = require(this.dir + '/node_modules/webpack');
+		} else {
+			this.webpack = require('/usr/local/lib/node_modules/webpack');
+		}
 		this.buildObj = new Build();
 		this.configManager = configManager(dir);
 	}
@@ -67,11 +74,16 @@ class WebpackBuilder {
 
 	hot() {
 		this.setEnv('hot');
-		require(this.dir + '/webpack.server.js');
+		if (process.version.startsWith('v8.')) {
+			require(this.dir + '/webpack.server.js');
+		} else {
+			cliTools.exec('npm run start');
+		}
 	}
 
 	applyProgressPlugin(config, isBuild = false) {
-		let ProgressPlugin = require(this.dir + '/node_modules/webpack/lib/ProgressPlugin');
+		let modulesDir = process.version.startsWith('v8.') ? this.dir : '/usr/local/lib';
+		let ProgressPlugin = require(modulesDir + '/node_modules/webpack/lib/ProgressPlugin');
 		config.plugins.push(new ProgressPlugin(isBuild ? this.buildProgressLog.bind(this) : this.watchProgressLog.bind(this)));
 		return config;
 	}
